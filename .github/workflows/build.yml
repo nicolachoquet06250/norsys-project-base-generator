@@ -133,29 +133,29 @@ jobs:
             apt-get install gcc-mingw-w64 -y &&
             export CGO_ENABLED=1 &&
             export CC=x86_64-w64-mingw32-gcc
-  release-darwin-amd64-gui:
-    name: release darwin/amd64 - gui
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: wangyoucao577/go-release-action@v1.28
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          goos: darwin
-          goarch: amd64
-          project_path: ./gui
-          md5sum: false
-          binary_name: norsys-project-base-generator-darwin-amd64-gui
-  release-darwin-arm64-gui:
-    name: release darwin/arm64 - gui
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: wangyoucao577/go-release-action@v1.28
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          goos: darwin
-          goarch: arm64
-          project_path: ./gui
-          md5sum: false
-          binary_name: norsys-project-base-generator-darwin-arm64-gui
+#  release-darwin-amd64-gui:
+#    name: release darwin/amd64 - gui
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: wangyoucao577/go-release-action@v1.28
+#        with:
+#          github_token: ${{ secrets.TOKEN }}
+#          goos: darwin
+#          goarch: amd64
+#          project_path: ./gui
+#          md5sum: false
+#          binary_name: norsys-project-base-generator-darwin-amd64-gui
+#  release-darwin-arm64-gui:
+#    name: release darwin/arm64 - gui
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: wangyoucao577/go-release-action@v1.28
+#        with:
+#          github_token: ${{ secrets.TOKEN }}
+#          goos: darwin
+#          goarch: arm64
+#          project_path: ./gui
+#          md5sum: false
+#          binary_name: norsys-project-base-generator-darwin-arm64-gui
