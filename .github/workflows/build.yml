@@ -49,6 +49,7 @@ jobs:
           goarch: amd64
           project_path: ./cli
           md5sum: false
+          binary_name: norsys-project-base-generator-linux-amd64-cli
   release-windows-amd64-cli:
     name: release windows/amd64 - cli
     runs-on: ubuntu-latest
@@ -61,6 +62,7 @@ jobs:
           goarch: amd64
           project_path: ./cli
           md5sum: false
+          binary_name: norsys-project-base-generator-windows-amd64-cli
   release-darwin-amd64-cli:
     name: release darwin/amd64 - cli
     runs-on: ubuntu-latest
@@ -73,6 +75,7 @@ jobs:
           goarch: amd64
           project_path: ./cli
           md5sum: false
+          binary_name: norsys-project-base-generator-darwin-amd64-cli
   release-darwin-arm64-cli:
     name: release darwin/arm64 - cli
     runs-on: ubuntu-latest
@@ -85,6 +88,7 @@ jobs:
           goarch: arm64
           project_path: ./cli
           md5sum: false
+          binary_name: norsys-project-base-generator-darwin-arm64-cli
 
   release-linux-amd64-gui:
     name: release linux/amd64 - gui
@@ -98,6 +102,7 @@ jobs:
           goarch: amd64
           project_path: ./gui
           md5sum: false
+          binary_name: norsys-project-base-generator-linux-amd64-gui
           pre_command: |
             apt-get update -y &&
             apt-get install libx11-dev xorg-dev -y &&
@@ -117,6 +122,7 @@ jobs:
           goarch: amd64
           project_path: ./gui
           md5sum: false
+          binary_name: norsys-project-base-generator-windows-amd64-gui
   release-darwin-amd64-gui:
     name: release darwin/amd64 - gui
     runs-on: ubuntu-latest
@@ -129,6 +135,7 @@ jobs:
           goarch: amd64
           project_path: ./gui
           md5sum: false
+          binary_name: norsys-project-base-generator-darwin-amd64-gui
   release-darwin-arm64-gui:
     name: release darwin/arm64 - gui
     runs-on: ubuntu-latest
@@ -141,3 +148,4 @@ jobs:
           goarch: arm64
           project_path: ./gui
           md5sum: false
+          binary_name: norsys-project-base-generator-darwin-arm64-gui
