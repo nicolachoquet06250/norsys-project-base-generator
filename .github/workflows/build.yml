@@ -129,8 +129,8 @@ jobs:
             apt-get install cmake pkg-config -y &&
             apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev -y &&
             apt-get install libglew-dev libglfw3-dev libglm-dev -y &&
-            apt-get install libao-dev libmpg123-dev -y
-            apt-get install gcc-mingw-w64
+            apt-get install libao-dev libmpg123-dev -y &&
+            apt-get install gcc-mingw-w64 -y
           build_command: 'GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build'
   release-darwin-amd64-gui:
     name: release darwin/amd64 - gui
