@@ -48,6 +48,7 @@ jobs:
           goos: linux
           goarch: amd64
           project_path: ./cli
+          md5sum: false
   release-windows-amd64-cli:
     name: release windows/amd64
     runs-on: ubuntu-latest
@@ -59,6 +60,7 @@ jobs:
           goos: windows
           goarch: amd64
           project_path: ./cli
+          md5sum: false
   release-darwin-amd64-cli:
     name: release darwin/amd64
     runs-on: ubuntu-latest
@@ -70,6 +72,7 @@ jobs:
           goos: darwin
           goarch: amd64
           project_path: ./cli
+          md5sum: false
   release-darwin-arm64-cli:
     name: release darwin/arm64
     runs-on: ubuntu-latest
@@ -81,6 +84,7 @@ jobs:
           goos: darwin
           goarch: arm64
           project_path: ./cli
+          md5sum: false
 
   release-linux-amd64-gui:
     name: release linux/amd64
@@ -93,6 +97,13 @@ jobs:
           goos: linux
           goarch: amd64
           project_path: ./gui
+          md5sum: false
+          pre_command: |
+            sudo apt-get update -y
+            sudo apt-get install cmake pkg-config -y
+            sudo apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev -y
+            sudo apt-get install libglew-dev libglfw3-dev libglm-dev -y
+            sudo apt-get install libao-dev libmpg123-dev -y
   release-windows-amd64-gui:
     name: release windows/amd64
     runs-on: ubuntu-latest
@@ -104,6 +115,7 @@ jobs:
           goos: windows
           goarch: amd64
           project_path: ./gui
+          md5sum: false
   release-darwin-amd64-gui:
     name: release darwin/amd64
     runs-on: ubuntu-latest
@@ -115,6 +127,7 @@ jobs:
           goos: darwin
           goarch: amd64
           project_path: ./gui
+          md5sum: false
   release-darwin-arm64-gui:
     name: release darwin/arm64
     runs-on: ubuntu-latest
@@ -126,3 +139,4 @@ jobs:
           goos: darwin
           goarch: arm64
           project_path: ./gui
+          md5sum: false
