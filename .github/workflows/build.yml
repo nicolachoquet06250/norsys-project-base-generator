@@ -123,6 +123,13 @@ jobs:
           project_path: ./gui
           md5sum: false
           binary_name: norsys-project-base-generator-windows-amd64-gui
+          pre_command: |
+            apt-get update -y &&
+            apt-get install libx11-dev xorg-dev -y &&
+            apt-get install cmake pkg-config -y &&
+            apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev -y &&
+            apt-get install libglew-dev libglfw3-dev libglm-dev -y &&
+            apt-get install libao-dev libmpg123-dev -y
   release-darwin-amd64-gui:
     name: release darwin/amd64 - gui
     runs-on: ubuntu-latest
