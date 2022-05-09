@@ -1,0 +1,1 @@
+go build -o ../dist/go_build_cli_go__Ubuntu_linux ../cli/
