@@ -163,6 +163,7 @@ func main() {
 	icon, err := fyne.LoadResourceFromPath("./assets/images/logo.png")
 	if err != nil {
 		println(fmt.Errorf("an error occured when load logo"))
+		println("")
 		return
 	}
 
