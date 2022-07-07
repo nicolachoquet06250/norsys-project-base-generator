@@ -37,49 +37,49 @@ jobs:
         run: mkdir ./dist
 
   release-linux-amd64:
-    name: release linux/amd64 - cli
+    name: release linux/amd64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           goos: linux
           goarch: amd64
           md5sum: false
           binary_name: norsys-project-base-generator-linux-amd64
   release-windows-amd64:
-    name: release windows/amd64 - cli
+    name: release windows/amd64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           goos: windows
           goarch: amd64
           md5sum: false
           binary_name: norsys-project-base-generator-windows-amd64
   release-darwin-amd64:
-    name: release darwin/amd64 - cli
+    name: release darwin/amd64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           goos: darwin
           goarch: amd64
           md5sum: false
           binary_name: norsys-project-base-generator-darwin-amd64
   release-darwin-arm64:
-    name: release darwin/arm64 - cli
+    name: release darwin/arm64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           goos: darwin
           goarch: arm64
           md5sum: false
