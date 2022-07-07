@@ -40,11 +40,15 @@ func Slash() string {
 }
 
 func PwdVar() string {
+	start := "("
+	end := ")"
+
 	if runtime.GOOS == "windows" {
-		return "${pwd}"
+		start = "{"
+		end = "}"
 	}
 
-	return "$(pwd)"
+	return "$" + start + "pwd" + end
 }
 
 func RootPath() string {

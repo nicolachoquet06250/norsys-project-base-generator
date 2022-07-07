@@ -31,7 +31,6 @@ const (
 
 func inArray(val interface{}, array interface{}) (exists bool) {
 	exists = false
-	//index = -1
 
 	switch reflect.TypeOf(array).Kind() {
 	case reflect.Slice:
@@ -39,7 +38,6 @@ func inArray(val interface{}, array interface{}) (exists bool) {
 
 		for i := 0; i < s.Len(); i++ {
 			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
-				//index = i
 				exists = true
 				return
 			}
@@ -144,5 +142,5 @@ func FromValue(value string) (Techno, error) {
 		}
 	}
 
-	return Techno{}, fmt.Errorf("aucune techno n'a été trouvé avec la valeur %s", value)
+	return Techno{}, fmt.Errorf("Aucune techno du nom de '%s' n'a été trouvée", value)
 }
