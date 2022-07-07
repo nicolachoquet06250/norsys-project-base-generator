@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Formulaire de génération d'environements de dev</title>
+</head>
+<body>
+    <div>
+        <form method="get" action="/generate">
+            <div>
+                <label for="path">Path : </label> <input type="text" id="path" name="path">
+            </div>
+
+            <div>
+                <label for="project-name">Project Name : </label> <input type="text" id="project-name" name="projectName">
+            </div>
+
+            <div>
+                <label for="techno">Techno : </label>
+
+                <select id="techno" name="techno">
+                    {{ range .Technos }}
+                    <option value="{{ .Value }}">
+                        {{ .Name }}
+                    </option>
+                    {{ end }}
+                </select>
+            </div>
+
+            <div>
+                <button type="submit">
+                    Générer un environement
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

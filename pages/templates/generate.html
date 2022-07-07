@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Generation du projet</title>
+</head>
+<body>
+    <h1>Génération du projet</h1>
+
+    <div>
+        <p>
+            Path: <b>{{ .ProjectPath }}</b>
+        </p>
+        <p>
+            Name: <b>{{ .ProjectName }}</b>
+        </p>
+        <p>
+            Selected Techno: <b>{{ .Techno }}</b>
+        </p>
+    </div>
+
+    <div>
+        <button onclick="window.location.href = '/'"></button>
+    </div>
+</body>
+</html>

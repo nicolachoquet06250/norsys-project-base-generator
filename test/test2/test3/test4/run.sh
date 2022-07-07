@@ -1,1 +1,0 @@
-sudo docker run −p 80:80 −−name static−image−1 static−image

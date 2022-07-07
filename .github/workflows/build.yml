@@ -4,7 +4,7 @@ on:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Create Release
+name: Create Release & Generate executables
 
 jobs:
   create_release:
@@ -36,125 +36,51 @@ jobs:
       - name: Create directory
         run: mkdir ./dist
 
-  release-linux-amd64-cli:
+  release-linux-amd64:
     name: release linux/amd64 - cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: linux
           goarch: amd64
-          project_path: ./cli
           md5sum: false
-          binary_name: norsys-project-base-generator-linux-amd64-cli
-  release-windows-amd64-cli:
+          binary_name: norsys-project-base-generator-linux-amd64
+  release-windows-amd64:
     name: release windows/amd64 - cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: windows
           goarch: amd64
-          project_path: ./cli
           md5sum: false
-          binary_name: norsys-project-base-generator-windows-amd64-cli
-  release-darwin-amd64-cli:
+          binary_name: norsys-project-base-generator-windows-amd64
+  release-darwin-amd64:
     name: release darwin/amd64 - cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: darwin
           goarch: amd64
-          project_path: ./cli
           md5sum: false
-          binary_name: norsys-project-base-generator-darwin-amd64-cli
-  release-darwin-arm64-cli:
+          binary_name: norsys-project-base-generator-darwin-amd64
+  release-darwin-arm64:
     name: release darwin/arm64 - cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: wangyoucao577/go-release-action@v1.28
         with:
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: darwin
           goarch: arm64
-          project_path: ./cli
           md5sum: false
-          binary_name: norsys-project-base-generator-darwin-arm64-cli
-
-  release-linux-amd64-gui:
-    name: release linux/amd64 - gui
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: wangyoucao577/go-release-action@v1.28
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          goos: linux
-          goarch: amd64
-          project_path: ./gui
-          md5sum: false
-          binary_name: norsys-project-base-generator-linux-amd64-gui
-          pre_command: |
-            apt-get update -y &&
-            apt-get install libx11-dev xorg-dev -y &&
-            apt-get install cmake pkg-config -y &&
-            apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev -y &&
-            apt-get install libglew-dev libglfw3-dev libglm-dev -y &&
-            apt-get install libao-dev libmpg123-dev -y
-  release-windows-amd64-gui:
-    name: release windows/amd64 - gui
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: wangyoucao577/go-release-action@v1.28
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          goos: windows
-          goarch: amd64
-          project_path: ./gui
-          md5sum: false
-          binary_name: norsys-project-base-generator-windows-amd64-gui
-          pre_command: |
-            apt-get update -y &&
-            apt-get install libx11-dev xorg-dev -y &&
-            apt-get install cmake pkg-config -y &&
-            apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev -y &&
-            apt-get install libglew-dev libglfw3-dev libglm-dev -y &&
-            apt-get install libao-dev libmpg123-dev -y &&
-            apt-get install gcc-mingw-w64 -y &&
-            export CGO_ENABLED=1 &&
-            export CC=x86_64-w64-mingw32-gcc
-#  release-darwin-amd64-gui:
-#    name: release darwin/amd64 - gui
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: wangyoucao577/go-release-action@v1.28
-#        with:
-#          github_token: ${{ secrets.TOKEN }}
-#          goos: darwin
-#          goarch: amd64
-#          project_path: ./gui
-#          md5sum: false
-#          binary_name: norsys-project-base-generator-darwin-amd64-gui
-#  release-darwin-arm64-gui:
-#    name: release darwin/arm64 - gui
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: wangyoucao577/go-release-action@v1.28
-#        with:
-#          github_token: ${{ secrets.TOKEN }}
-#          goos: darwin
-#          goarch: arm64
-#          project_path: ./gui
-#          md5sum: false
-#          binary_name: norsys-project-base-generator-darwin-arm64-gui
+          binary_name: norsys-project-base-generator-darwin-arm64
