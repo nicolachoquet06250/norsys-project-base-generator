@@ -10,7 +10,11 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 	fileName := mux.Vars(r)["file"]
 
 	if fileName != "" {
-		file, _ := os.ReadFile("pages/templates/assets/" + fileName + ".css")
+		file, fileErr := os.ReadFile("pages/templates/assets/" + fileName + ".css")
+
+		if fileErr != nil {
+			println(fileErr.Error())
+		}
 
 		query := r.URL.Query()
 		queryStringParams := map[string]interface{}{}
