@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body > form > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+body > form > div:not(:first-child) {
+    margin-top: 5px;
+}
+
+body > form > div > input,
+body > form > div > select {
+    width: 100%;
+}
+
+body > form > div:last-child {
+    margin-top: 15px;
+    flex-direction: row;
+    align-items: center;
+}
+
+body > form > div:last-child > button:first-child {
+    margin-right: 5px;
+}
+
+body > form > div:last-child > button:last-child {
+    margin-left: 5px;
+}

@@ -6,36 +6,42 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Formulaire de génération d'environements de dev</title>
+
+    <link rel="stylesheet" href="assets/home.css">
 </head>
 <body>
-    <div>
-        <form method="get" action="/generate">
-            <div>
-                <label for="path">Path : </label> <input type="text" id="path" name="path">
-            </div>
+    <h1> Norsys Project Base Generator </h1>
 
-            <div>
-                <label for="project-name">Project Name : </label> <input type="text" id="project-name" name="projectName">
-            </div>
+    <form method="get" action="/generate">
+        <div>
+            <label for="path">Path : </label>
+            <input type="text" id="path" name="path">
+        </div>
 
-            <div>
-                <label for="techno">Techno : </label>
+        <div>
+            <label for="project-name">Project Name : </label>
+            <input type="text" id="project-name" name="projectName">
+        </div>
 
-                <select id="techno" name="techno">
-                    {{ range .Technos }}
-                    <option value="{{ .Value }}">
-                        {{ .Name }}
-                    </option>
-                    {{ end }}
-                </select>
-            </div>
+        <div>
+            <label for="techno">Techno : </label>
 
-            <div>
-                <button type="submit">
-                    Générer un environement
-                </button>
-            </div>
-        </form>
-    </div>
+            <select id="techno" name="techno">
+                {{ range .Technos }}
+                    <option value="{{ .Value }}"> {{ .Name }} </option>
+                {{ end }}
+            </select>
+        </div>
+
+        <div>
+            <button type="submit">
+                Générer un environement
+            </button>
+
+            <button type="reset">
+                Annuler
+            </button>
+        </div>
+    </form>
 </body>
 </html>
