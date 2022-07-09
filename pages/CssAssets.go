@@ -1,20 +1,31 @@
 package pages
 
 import (
+	_ "embed"
 	"github.com/gorilla/mux"
 	"net/http"
-	"os"
+)
+
+//go:embed templates/assets/home.css
+var homeCss string
+
+const (
+	HOME = "home"
+	VOID = ""
 )
 
 func CssAssets(w http.ResponseWriter, r *http.Request) {
 	fileName := mux.Vars(r)["file"]
 
-	if fileName != "" {
-		file, fileErr := os.ReadFile("pages/templates/assets/" + fileName + ".css")
-
-		if fileErr != nil {
-			println(fileErr.Error())
-		}
+	if fileName != VOID {
+		file := func() string {
+			switch fileName {
+			case HOME:
+				return homeCss
+			default:
+				return VOID
+			}
+		}()
 
 		query := r.URL.Query()
 		queryStringParams := map[string]interface{}{}
@@ -23,10 +34,10 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 			queryStringParams[param] = query.Get(param)
 		}
 
-		result, _ := ParsePage("css", string(file), queryStringParams)
+		result, _ := ParsePage("css", file, queryStringParams)
 
 		Css(&w, result)
 	} else {
-		Css(&w, "")
+		Css(&w, VOID)
 	}
 }
