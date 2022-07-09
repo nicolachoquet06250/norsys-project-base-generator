@@ -33,6 +33,10 @@ func main() {
 
 	routing.Routes()
 
-	println("server opened on http://localhost:8042 ")
-	log.Fatal(http.ListenAndServe(":8042", nil))
+	println("server opened on http://localhost:8042")
+	cli.Browser{}.Open("http://localhost:8042")
+	err := http.ListenAndServe(":8042", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
