@@ -33,6 +33,6 @@ func main() {
 
 	routing.Routes()
 
-	println("server opened on http://localhost:8042")
+	println("server opened on http://localhost:8042 ")
 	log.Fatal(http.ListenAndServe(":8042", nil))
 }
