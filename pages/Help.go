@@ -3,6 +3,7 @@ package pages
 import (
 	_ "embed"
 	"net/http"
+	"test_go_webserver/http/portChoice"
 )
 
 //go:embed templates/help.html
@@ -12,6 +13,7 @@ func Help(w http.ResponseWriter, r *http.Request) {
 	result, _ := ParsePage("help", help, map[string]interface{}{
 		"Path": r.URL.Path,
 		"Home": r.URL.Path == "/",
+		"Port": portChoice.ChosenPort.Local,
 	})
 	Text(&w, result)
 }

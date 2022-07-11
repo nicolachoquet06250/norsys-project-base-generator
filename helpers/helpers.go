@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"math/rand"
 	"os"
 	"runtime"
 	"strconv"
@@ -91,4 +92,8 @@ func (s *String) AppendIf(condition bool, ifTrue string, ifFalse string) *String
 
 func (s *String) IsEmpty() bool {
 	return strings.Trim(s.String, " ") == ""
+}
+
+func RandomNumber(min int, max int) int {
+	return rand.Intn(max-min) + min
 }
