@@ -42,7 +42,6 @@ func ChooseUnusedPort() int {
 		var re = regexp.MustCompile(`^ {2}TCP {4}\d{0,3}\.\d{0,3}\.\d{0,3}\.\d{0,3}:(?P<local_port>80\d+) +\d{0,3}\.\d{0,3}\.\d{0,3}\.\d{0,3}:(?P<remote_port>\d+) +(LISTENING) +\d+$`)
 
 		for _, match := range re.FindAllString(l, -1) {
-			println(match)
 			matches := re.FindStringSubmatch(match)
 
 			localPort, _ := strconv.Atoi(matches[re.SubexpIndex("local_port")])
@@ -56,11 +55,6 @@ func ChooseUnusedPort() int {
 	chosenPort := localPort
 
 	exists, _ := InArray(chosenPort, listeningPorts)
-	println(len(listeningPorts))
-	for _, p := range listeningPorts {
-		println(p)
-	}
-	println(strconv.FormatInt(int64(chosenPort), 10)+" exists", exists)
 	if exists == true {
 		return ChooseUnusedPort()
 	} else {
