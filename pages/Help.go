@@ -13,7 +13,7 @@ func Help(w http.ResponseWriter, r *http.Request) {
 	result, _ := ParsePage("help", help, map[string]interface{}{
 		"Path": r.URL.Path,
 		"Home": r.URL.Path == "/",
-		"Port": portChoice.ChosenPort.Local,
+		"Port": portChoice.ChosenPort,
 	})
 	Text(&w, result)
 }

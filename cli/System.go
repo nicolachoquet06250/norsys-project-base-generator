@@ -2,15 +2,15 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
 func BackLine() string {
-	if os.Getenv("GOOS") == "windows" {
+	if runtime.GOOS == "windows" {
 		return "\r\n"
-	} else if os.Getenv("GOOS") == "linux" || os.Getenv("GOOS") == "darwin" {
+	} else if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		return "\n"
 	}
 

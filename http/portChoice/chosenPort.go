@@ -9,12 +9,7 @@ import (
 	"test_go_webserver/helpers"
 )
 
-type ListeningPort struct {
-	Local  int
-	Remote int
-}
-
-var ChosenPort ListeningPort
+var ChosenPort int
 
 func InArray(val interface{}, array interface{}) (exists bool, index int) {
 	exists = false
@@ -41,39 +36,35 @@ func ChooseUnusedPort() int {
 
 	lines := strings.Split(string(out), cli.BackLine())
 
-	var listeningPorts []ListeningPort
+	var listeningPorts []int
 
 	for _, l := range lines {
 		var re = regexp.MustCompile(`^ {2}TCP {4}\d{0,3}\.\d{0,3}\.\d{0,3}\.\d{0,3}:(?P<local_port>80\d+) +\d{0,3}\.\d{0,3}\.\d{0,3}\.\d{0,3}:(?P<remote_port>\d+) +(LISTENING) +\d+$`)
 
 		for _, match := range re.FindAllString(l, -1) {
+			println(match)
 			matches := re.FindStringSubmatch(match)
 
 			localPort, _ := strconv.Atoi(matches[re.SubexpIndex("local_port")])
-			remotePort, _ := strconv.Atoi(matches[re.SubexpIndex("remote_port")])
 
-			listeningPorts = append(listeningPorts, ListeningPort{
-				Local:  localPort,
-				Remote: remotePort,
-			})
+			listeningPorts = append(listeningPorts, localPort)
 		}
 	}
 
 	localPort := helpers.RandomNumber(8000, 8099)
 
-	_chosenPort := ListeningPort{
-		Local:  localPort,
-		Remote: 0,
-	}
+	chosenPort := localPort
 
-	exists, _ := InArray(_chosenPort, listeningPorts)
+	exists, _ := InArray(chosenPort, listeningPorts)
+	println(len(listeningPorts))
+	for _, p := range listeningPorts {
+		println(p)
+	}
+	println(strconv.FormatInt(int64(chosenPort), 10)+" exists", exists)
 	if exists == true {
 		return ChooseUnusedPort()
 	} else {
-		ChosenPort = ListeningPort{
-			Local:  localPort,
-			Remote: 0,
-		}
-		return localPort
+		ChosenPort = localPort
+		return ChosenPort
 	}
 }
