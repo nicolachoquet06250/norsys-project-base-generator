@@ -1,6 +1,8 @@
 * {
     box-sizing: border-box;
     font-family: sans-serif;
+    color: go-bind(color, black);
+    background: go-bind(bgColor);
 }
 
 body {

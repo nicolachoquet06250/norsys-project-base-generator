@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"github.com/gorilla/mux"
 	"net/http"
+	"regexp"
 	. "test_go_webserver/pages/helpers"
 )
 
@@ -22,6 +23,14 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 		file := func() string {
 			switch fileName {
 			case HOME:
+				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
+				substitution := "{{ .$variable }}"
+				homeCss = re.ReplaceAllString(homeCss, substitution)
+
+				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
+				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
+				homeCss = re.ReplaceAllString(homeCss, substitution)
+
 				return homeCss
 			default:
 				return VOID
