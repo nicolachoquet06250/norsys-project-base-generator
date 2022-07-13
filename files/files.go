@@ -10,17 +10,6 @@ import (
 	"test_go_webserver/technos"
 )
 
-func arrayPop[T any](s *[]T) (v T, err error) {
-	if len(*s) == 0 {
-		var s T
-		return s, fmt.Errorf("can't remove last element of array")
-	}
-	ep := len(*s) - 1
-	e := (*s)[ep]
-	*s = (*s)[:ep]
-	return e, nil
-}
-
 func Exists(path string) bool {
 	path = strings.ReplaceAll(path, Slash()+Slash(), Slash())
 
@@ -44,7 +33,7 @@ func Create(path string, content string) error {
 
 	var splitPath = strings.Split(path, Slash())
 
-	_, _ = arrayPop(&splitPath)
+	_, _ = ArrayPop(&splitPath)
 
 	var _path = strings.Join(splitPath, Slash())
 

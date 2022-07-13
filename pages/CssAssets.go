@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"github.com/gorilla/mux"
 	"net/http"
+	. "test_go_webserver/pages/helpers"
 )
 
 //go:embed templates/assets/home.css

@@ -1,35 +1,14 @@
 package portChoice
 
 import (
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
 	"test_go_webserver/cli"
-	"test_go_webserver/helpers"
+	. "test_go_webserver/helpers"
 )
 
 var ChosenPort int
-
-func InArray(val interface{}, array interface{}) (exists bool, index int) {
-	exists = false
-	index = -1
-
-	switch reflect.TypeOf(array).Kind() {
-	case reflect.Slice:
-		s := reflect.ValueOf(array)
-
-		for i := 0; i < s.Len(); i++ {
-			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
-				index = i
-				exists = true
-				return
-			}
-		}
-	}
-
-	return
-}
 
 func ChooseUnusedPort() int {
 	out := cli.ExeCmd("netstat -nao")
@@ -50,7 +29,7 @@ func ChooseUnusedPort() int {
 		}
 	}
 
-	localPort := helpers.RandomNumber(8000, 8099)
+	localPort := RandomNumber(8000, 8099)
 
 	chosenPort := localPort
 

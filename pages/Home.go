@@ -3,6 +3,7 @@ package pages
 import (
 	_ "embed"
 	"net/http"
+	. "test_go_webserver/pages/helpers"
 	"test_go_webserver/technos"
 )
 

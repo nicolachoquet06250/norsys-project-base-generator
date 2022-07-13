@@ -2,7 +2,7 @@ package technos
 
 import (
 	"fmt"
-	"reflect"
+	. "test_go_webserver/helpers"
 )
 
 const (
@@ -29,26 +29,8 @@ const (
 	Spring = "Java Spring"
 )
 
-func inArray(val interface{}, array interface{}) (exists bool) {
-	exists = false
-
-	switch reflect.TypeOf(array).Kind() {
-	case reflect.Slice:
-		s := reflect.ValueOf(array)
-
-		for i := 0; i < s.Len(); i++ {
-			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
-				exists = true
-				return
-			}
-		}
-	}
-
-	return
-}
-
 func IsTechno(techno string) bool {
-	return inArray(techno, []string{
+	exists, _ := InArray(techno, []string{
 		JavaScript,
 		React15, React16, React17, React18,
 		Vue2, Vue3,
@@ -57,6 +39,8 @@ func IsTechno(techno string) bool {
 		Go,
 		Java, Spring,
 	})
+
+	return exists
 }
 
 type Techno struct {

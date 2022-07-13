@@ -1,11 +1,9 @@
 package helpers
 
 import (
-	"math/rand"
 	"os"
 	"runtime"
 	"strconv"
-	"strings"
 	"test_go_webserver/error"
 )
 
@@ -22,6 +20,18 @@ func Arg(index int, name ...string) (string, error.IError) {
 	}
 }
 
+func IsWindows() bool {
+	return runtime.GOOS == "windows"
+}
+
+func IsLinux() bool {
+	return runtime.GOOS == "linux"
+}
+
+func IsDarwin() bool {
+	return runtime.GOOS == "darwin"
+}
+
 func CharBack() string {
 	return "\n"
 }
@@ -33,7 +43,7 @@ func Tab() string {
 func Slash() string {
 	var slash = "/"
 
-	if runtime.GOOS == "windows" {
+	if IsWindows() {
 		slash = "\\"
 	}
 
@@ -44,7 +54,7 @@ func PwdVar() string {
 	start := "("
 	end := ")"
 
-	if runtime.GOOS == "windows" {
+	if IsWindows() {
 		start = "{"
 		end = "}"
 	}
@@ -55,7 +65,7 @@ func PwdVar() string {
 func RootPath() string {
 	var root = "/"
 
-	if runtime.GOOS == "windows" {
+	if IsWindows() {
 		root = "C:\\"
 	}
 
@@ -64,36 +74,4 @@ func RootPath() string {
 
 func IsBuild() bool {
 	return os.Getenv("GOBUILD") != "1"
-}
-
-type String struct {
-	String string
-}
-
-func (s *String) IsError() bool {
-	return s.String != "" || s.String == "ERROR : "
-}
-
-func (s *String) Append(str string) *String {
-	(*s).String += str
-
-	return s
-}
-
-func (s *String) AppendIf(condition bool, ifTrue string, ifFalse string) *String {
-	if condition {
-		(*s).String += ifTrue
-	} else {
-		(*s).String += ifFalse
-	}
-
-	return s
-}
-
-func (s *String) IsEmpty() bool {
-	return strings.Trim(s.String, " ") == ""
-}
-
-func RandomNumber(min int, max int) int {
-	return rand.Intn(max-min) + min
 }

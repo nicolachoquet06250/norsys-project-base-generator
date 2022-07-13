@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"test_go_webserver/files"
 	. "test_go_webserver/helpers"
+	. "test_go_webserver/pages/helpers"
 	"test_go_webserver/technos"
 )
 
