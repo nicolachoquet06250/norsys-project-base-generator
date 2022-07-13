@@ -1,3 +1,5 @@
+@import "/bootstrap/b.css";
+
 * {
     box-sizing: border-box;
     font-family: sans-serif;
@@ -10,6 +12,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
 body > form > div {

@@ -41,3 +41,12 @@ func Css(w *http.ResponseWriter, r string) {
 		_ = fmt.Errorf("error : %s", err)
 	}
 }
+
+func Js(w *http.ResponseWriter, r string) {
+	(*w).Header().Set("Content-Type", "application/javascript")
+
+	_, err := (*w).Write([]byte(r))
+	if err != nil {
+		_ = fmt.Errorf("error : %s", err)
+	}
+}

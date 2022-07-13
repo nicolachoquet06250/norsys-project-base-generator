@@ -9,39 +9,59 @@
 
     <link rel="stylesheet" href="assets/home.css">
 </head>
-<body>
-    <h1> Norsys Project Base Generator </h1>
+<body class="d-flex justify-content-center align-items-center">
+    <div class="card p-3 mt-2">
+        <h2 class="card-title">
+            Norsys Project Base Generator
+        </h2>
 
-    <form method="get" action="/generate">
-        <div>
-            <label for="path">Path : </label>
-            <input type="text" id="path" name="path">
-        </div>
+        <form method="get" action="/generate" class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <label for="path" class="form-label">
+                            Path :
+                        </label>
 
-        <div>
-            <label for="project-name">Project Name : </label>
-            <input type="text" id="project-name" name="projectName">
-        </div>
+                        <input type="text" id="path" name="path" class="form-control">
+                    </div>
+                </div>
 
-        <div>
-            <label for="techno">Techno : </label>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="project-name" class="form-label">
+                            Project Name :
+                        </label>
 
-            <select id="techno" name="techno">
-                {{ range .Technos }}
-                    <option value="{{ .Value }}"> {{ .Name }} </option>
-                {{ end }}
-            </select>
-        </div>
+                        <input type="text" id="project-name" name="projectName" class="form-control">
+                    </div>
+                </div>
 
-        <div>
-            <button type="submit">
-                Générer un environement
-            </button>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="techno">Techno : </label>
 
-            <button type="reset">
-                Annuler
-            </button>
-        </div>
-    </form>
+                        <select id="techno" name="techno" class="form-select">
+                            {{ range .Technos }}
+                            <option value="{{ .Value }}"> {{ .Name }} </option>
+                            {{ end }}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 pt-2 d-flex justify-content-between align-items-center">
+                        <button type="submit" class="btn btn-outline-success card-link">
+                            Générer un environement
+                        </button>
+
+                        <button type="reset" class="btn btn-outline-danger card-link">
+                            Annuler
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

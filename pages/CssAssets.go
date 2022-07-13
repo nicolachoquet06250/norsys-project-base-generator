@@ -11,6 +11,18 @@ import (
 //go:embed templates/assets/home.css
 var homeCss string
 
+//go:embed templates/assets/bootstrap/css/bootstrap.min.css
+var bootstrapProdCss string
+
+//go:embed templates/assets/bootstrap/css/bootstrap.css
+var bootstrapHorsProdCss string
+
+//go:embed templates/assets/bootstrap/css/bootstrap.css.map
+var bootstrapHorsProdCssMap string
+
+//go:embed templates/assets/bootstrap/css/bootstrap.min.css.map
+var bootstrapProdCssMap string
+
 const (
 	HOME = "home"
 	VOID = ""
@@ -49,5 +61,21 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 		Css(&w, result)
 	} else {
 		Css(&w, VOID)
+	}
+}
+
+func BootstrapCssAssets(w http.ResponseWriter, r *http.Request) {
+	if r.Host == "localhost" || r.Host == "127.0.0.1" {
+		Css(&w, bootstrapHorsProdCss)
+	} else {
+		Css(&w, bootstrapProdCss)
+	}
+}
+
+func BootstrapCssMapAssets(w http.ResponseWriter, r *http.Request) {
+	if r.Host == "localhost" || r.Host == "127.0.0.1" {
+		Css(&w, bootstrapHorsProdCssMap)
+	} else {
+		Css(&w, bootstrapProdCssMap)
 	}
 }
