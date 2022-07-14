@@ -6,34 +6,51 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Help</title>
+
+    <link rel="stylesheet" href="assets/help.css">
 </head>
 <body>
-    <section>
-        <h1> CLI </h1>
-        <h2> 2 paramètres </h2>
+    <nav class="nav nav-pills p-2">
+        <a class="nav-link" href="/">Accueil</a>
+        <a class="nav-link active" aria-current="page" href="/help">Aide</a>
+    </nav>
 
-        <ol>
-            <li> chemin du projet </li>
-            <li>
-                technologie utilisée
-                <div>ex :
-                    <ul>
-                        <li> javascript </li>
-                        <li> react-17 </li>
-                        <li> vue-2 </li>
-                    </ul>
-                </div>
-            </li>
-        </ol>
-    </section>
+    <main class="container">
+        <h1> Aide </h1>
 
-    <section>
-        <h1> WEB </h1>
-        <h2> 0 paramètre </h2>
+        <div class="row mb-2">
+            <div class="col-12">
+                <section class="card">
+                    <div class="card-body">
+                        <h1 class="card-title"> CLI </h1>
+                        <h2 class="card-subtitle mb-2 text-muted"> 2 paramètres </h2>
 
-        <p>
-            Accessible sur <a href="http://localhost:{{ .Port }}" target="_blank">http://localhost:{{ .Port }}</a>
-        </p>
-    </section>
+                        <ol class="list-group">
+                            <li class="list-group-item"> chemin du projet </li>
+                            <li class="list-group-item"> technologie utilisée </li>
+                            <li class="list-group-item">&nbsp;&nbsp;&nbsp;&nbsp;ex : javascript </li>
+                            <li class="list-group-item">&nbsp;&nbsp;&nbsp;&nbsp;ex :  react-17 </li>
+                            <li class="list-group-item">&nbsp;&nbsp;&nbsp;&nbsp;ex :  vue-2 </li>
+                        </ol>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <section class="card">
+                    <div class="card-body">
+                        <h1 class="card-title"> WEB </h1>
+                        <h2 class="card-subtitle mb-2 text-muted"> 0 paramètre </h2>
+
+                        <p class="card-text">
+                            Accessible sur <a href="http://localhost:{{ .Port }}" target="_blank">http://localhost:{{ .Port }}</a>
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

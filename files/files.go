@@ -64,7 +64,7 @@ func Create(path string, content string) error {
 	return nil
 }
 
-func ProjectGeneration(projectPath string, techno technos.Techno) {
+func ProjectGeneration(projectPath string, techno technos.Techno) (alert Alert) {
 	var err error
 	technoName := techno.Name
 	technoValue := techno.Value
@@ -79,8 +79,14 @@ func ProjectGeneration(projectPath string, techno technos.Techno) {
 	}
 
 	if err == nil && Exists(projectPath) {
+		alert.Message = fmt.Sprintf("Le projet %s à bien été généré dans le répertoire %s !", technoName, projectPath)
+		alert.Type = SUCCESS
 		println("Le projet " + technoName + " à bien été généré dans le répertoire " + projectPath + " !")
 	} else {
+		alert.Message = fmt.Sprintf("Une erreur est survenue lors de la génération du projet %s dans le répertoire %s !", technoValue, projectPath)
+		alert.Type = ERROR
 		println("Une erreur est survenue lors de la génération du projet " + technoValue + " dans le répertoire " + projectPath + " !")
 	}
+
+	return alert
 }

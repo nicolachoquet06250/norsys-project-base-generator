@@ -1,0 +1,9 @@
+@import "/bootstrap/b.css";
+
+body {
+    height: 100vh;
+}
+
+.alert {
+    max-width: 600px;
+}

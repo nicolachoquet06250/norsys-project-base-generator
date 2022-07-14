@@ -7,61 +7,89 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Formulaire de génération d'environements de dev</title>
 
-    <link rel="stylesheet" href="assets/home.css">
+    <link rel="stylesheet" href="{{.CssFile}}">
 </head>
-<body class="d-flex justify-content-center align-items-center">
-    <div class="card p-3 mt-2">
-        <h2 class="card-title">
-            Norsys Project Base Generator
-        </h2>
+<body>
+    <nav class="nav nav-pills p-2">
+        <a class="nav-link active" aria-current="page" href="/">Accueil</a>
+        <a class="nav-link" href="/help">Aide</a>
+    </nav>
 
-        <form method="get" action="/generate" class="card-body">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <label for="path" class="form-label">
-                            Path :
-                        </label>
+    <main class="d-flex justify-content-center align-items-center">
+        <div class="card p-3 mt-2">
+                <h2 class="card-title">
+                    {{if .PageTitle}}
+                        {{.PageTitle}}
+                    {{else}}
+                        Norsys Project Base Generator
+                    {{end}}
+                </h2>
 
-                        <input type="text" id="path" name="path" class="form-control">
+                {{if .Alert}}
+                    <div class="alert alert-{{.Alert.Type}}" style="max-width: 600px" role="alert">
+                        {{.Alert.Message}}
                     </div>
-                </div>
+                {{end}}
 
-                <div class="row">
-                    <div class="col-12">
-                        <label for="project-name" class="form-label">
-                            Project Name :
-                        </label>
+                <form method="get" action="/generate" class="card-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="path" class="form-label">
+                                    Path :
+                                </label>
 
-                        <input type="text" id="project-name" name="projectName" class="form-control">
+                                <input type="text" id="path" name="path" class="form-control"
+                                       {{if .IsGenerate}}disabled{{end}}
+                                       {{if .ProjectPath}}value="{{.ProjectPath}}"{{end}}>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="project-name" class="form-label">
+                                    Project Name :
+                                </label>
+
+                                <input type="text" id="project-name" name="projectName" class="form-control"
+                                       {{if .IsGenerate}}disabled{{end}}
+                                       {{if .ProjectName}}value="{{.ProjectName}}"{{end}}>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="techno">Techno : </label>
+
+                                <select id="techno" name="techno" class="form-select"
+                                        {{if .IsGenerate}}disabled{{end}}>
+                                    {{ range .Technos }}
+                                    <option value="{{ .Value }}" {{if .Selected}}selected{{end}}> {{ .Name }} </option>
+                                    {{ end }}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 pt-2 d-flex justify-content-between align-items-center">
+                                {{if .IsGenerate}}
+                                    <a href="/" class="card-link">
+                                        Retour à l'accueil
+                                    </a>
+                                {{else}}
+                                    <button type="submit" class="btn btn-outline-success card-link">
+                                        Générer un environement
+                                    </button>
+
+                                    <button type="reset" class="btn btn-outline-danger card-link">
+                                        Annuler
+                                    </button>
+                                {{end}}
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <label for="techno">Techno : </label>
-
-                        <select id="techno" name="techno" class="form-select">
-                            {{ range .Technos }}
-                            <option value="{{ .Value }}"> {{ .Name }} </option>
-                            {{ end }}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 pt-2 d-flex justify-content-between align-items-center">
-                        <button type="submit" class="btn btn-outline-success card-link">
-                            Générer un environement
-                        </button>
-
-                        <button type="reset" class="btn btn-outline-danger card-link">
-                            Annuler
-                        </button>
-                    </div>
-                </div>
+                </form>
             </div>
-        </form>
-    </div>
+    </main>
 </body>
 </html>

@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"test_go_webserver/technos"
 )
 
 func ParsePage(name string, tpl string, vars map[string]interface{}) (string, error) {
@@ -49,4 +50,35 @@ func Js(w *http.ResponseWriter, r string) {
 	if err != nil {
 		_ = fmt.Errorf("error : %s", err)
 	}
+}
+
+type PotentiallySelectedTechno struct {
+	technos.Techno
+	Selected bool
+}
+
+func GetTechnoList(techno *technos.Techno) []PotentiallySelectedTechno {
+	list := technos.All()
+	var finalList []PotentiallySelectedTechno
+
+	for _, v := range list {
+		t := PotentiallySelectedTechno{
+			Techno: v,
+			Selected: func() bool {
+				if techno == nil {
+					return false
+				}
+
+				if (*techno).Value == v.Value {
+					return true
+				} else {
+					return false
+				}
+			}(),
+		}
+
+		finalList = append(finalList, t)
+	}
+
+	return finalList
 }

@@ -48,6 +48,21 @@ jobs:
           goarch: amd64
           md5sum: false
           binary_name: norsys-project-base-generator-linux-amd64
+          retry: 3
+  release-linux-gui-amd64:
+    name: release linux/amd64 gui app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wangyoucao577/go-release-action@v1.28
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          goos: linux
+          goarch: amd64
+          md5sum: false
+          binary_name: norsys-project-base-generator-gui-linux-amd64
+          project_path: ./gui
+          retry: 3
   release-windows-amd64:
     name: release windows/amd64
     runs-on: ubuntu-latest
@@ -60,6 +75,21 @@ jobs:
           goarch: amd64
           md5sum: false
           binary_name: norsys-project-base-generator-windows-amd64
+          retry: 3
+  release-windows-gui-amd64:
+    name: release windows/amd64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wangyoucao577/go-release-action@v1.28
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          goos: windows
+          goarch: amd64
+          md5sum: false
+          binary_name: norsys-project-base-generator-gui-windows-amd64
+          project_path: ./gui
+          retry: 3
   release-darwin-amd64:
     name: release darwin/amd64
     runs-on: ubuntu-latest
@@ -72,6 +102,21 @@ jobs:
           goarch: amd64
           md5sum: false
           binary_name: norsys-project-base-generator-darwin-amd64
+          retry: 3
+  release-darwin-gui-amd64:
+    name: release darwin/amd64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wangyoucao577/go-release-action@v1.28
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          goos: darwin
+          goarch: amd64
+          md5sum: false
+          binary_name: norsys-project-base-generator-gui-darwin-amd64
+          project_path: ./gui
+          retry: 3
   release-darwin-arm64:
     name: release darwin/arm64
     runs-on: ubuntu-latest
@@ -84,3 +129,18 @@ jobs:
           goarch: arm64
           md5sum: false
           binary_name: norsys-project-base-generator-darwin-arm64
+          retry: 3
+  release-darwin-gui-arm64:
+    name: release darwin/arm64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wangyoucao577/go-release-action@v1.28
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          goos: darwin
+          goarch: arm64
+          md5sum: false
+          binary_name: norsys-project-base-generator-gui-darwin-arm64
+          project_path: ./gui
+          retry: 3

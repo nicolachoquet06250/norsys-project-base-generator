@@ -2,6 +2,7 @@ package pages
 
 import (
 	_ "embed"
+	"log"
 	"net/http"
 	"test_go_webserver/files"
 	. "test_go_webserver/helpers"
@@ -9,7 +10,7 @@ import (
 	"test_go_webserver/technos"
 )
 
-//go:embed templates/generate.html
+//go:embed templates/index.html
 var generate string
 
 func Generate(w http.ResponseWriter, r *http.Request) {
@@ -23,14 +24,19 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files.ProjectGeneration(projectPath, techno)
+	alert := files.ProjectGeneration(projectPath, techno)
 
-	result, _ := ParsePage("generate", generate, map[string]interface{}{
-		"Path":        r.URL.Path,
-		"Home":        r.URL.Path == "/",
+	result, err := ParsePage("generate", generate, map[string]interface{}{
+		"PageTitle":   "Génération du projet",
+		"CssFile":     "assets/generate.css",
 		"ProjectPath": projectPath,
 		"ProjectName": projectName,
-		"Techno":      techno.Name,
+		"Technos":     GetTechnoList(&techno),
+		"IsGenerate":  true,
+		"Alert":       alert,
 	})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	Text(&w, result)
 }

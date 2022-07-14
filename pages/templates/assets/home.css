@@ -8,11 +8,15 @@
 }
 
 body {
+    height: 100vh;
+}
+
+body > main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: calc(100% - 56px);
 }
 
 body > form > div {

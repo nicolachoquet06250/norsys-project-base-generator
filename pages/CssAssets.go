@@ -11,6 +11,12 @@ import (
 //go:embed templates/assets/home.css
 var homeCss string
 
+//go:embed templates/assets/generate.css
+var generateCss string
+
+//go:embed templates/assets/help.css
+var helpCss string
+
 //go:embed templates/assets/bootstrap/css/bootstrap.min.css
 var bootstrapProdCss string
 
@@ -24,8 +30,10 @@ var bootstrapHorsProdCssMap string
 var bootstrapProdCssMap string
 
 const (
-	HOME = "home"
-	VOID = ""
+	HOME     = "home"
+	GENERATE = "generate"
+	HELP     = "help"
+	VOID     = ""
 )
 
 func CssAssets(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +52,26 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 				homeCss = re.ReplaceAllString(homeCss, substitution)
 
 				return homeCss
+			case GENERATE:
+				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
+				substitution := "{{ .$variable }}"
+				generateCss = re.ReplaceAllString(generateCss, substitution)
+
+				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
+				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
+				generateCss = re.ReplaceAllString(generateCss, substitution)
+
+				return generateCss
+			case HELP:
+				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
+				substitution := "{{ .$variable }}"
+				helpCss = re.ReplaceAllString(helpCss, substitution)
+
+				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
+				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
+				helpCss = re.ReplaceAllString(helpCss, substitution)
+
+				return helpCss
 			default:
 				return VOID
 			}
