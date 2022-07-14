@@ -77,7 +77,7 @@ jobs:
           binary_name: norsys-project-base-generator-windows-amd64
           retry: 3
   release-windows-gui-amd64:
-    name: release windows/amd64
+    name: release windows/amd64 gui app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -104,7 +104,7 @@ jobs:
           binary_name: norsys-project-base-generator-darwin-amd64
           retry: 3
   release-darwin-gui-amd64:
-    name: release darwin/amd64
+    name: release darwin/amd64 gui app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -131,7 +131,7 @@ jobs:
           binary_name: norsys-project-base-generator-darwin-arm64
           retry: 3
   release-darwin-gui-arm64:
-    name: release darwin/arm64
+    name: release darwin/arm64 gui app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
