@@ -3,22 +3,7 @@ package helpers
 import (
 	"os"
 	"runtime"
-	"strconv"
-	"test_go_webserver/error"
 )
-
-func Arg(index int, name ...string) (string, error.IError) {
-	if len(os.Args) > index {
-		return os.Args[index], error.NewError("")
-	} else {
-		var _name = "args[" + strconv.FormatInt(int64(index), 10) + "]"
-		if len(name) > 0 {
-			_name = name[0]
-		}
-
-		return "", error.NewError(_name + " not found !")
-	}
-}
 
 func IsWindows() bool {
 	return runtime.GOOS == "windows"
