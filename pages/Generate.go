@@ -24,7 +24,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	alert := files.ProjectGeneration(projectPath, techno)
+	alert := files.ProjectGeneration(projectPath, techno, &projectName)
 
 	result, err := ParsePage("generate", generate, map[string]interface{}{
 		"PageTitle":   "Génération du projet",

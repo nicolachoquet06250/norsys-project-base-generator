@@ -105,5 +105,41 @@ services:
 		"build.sh": "docker-compose up -d",
 	}
 
+	configFiles[technos.PHP] = treeElement{
+		"docker-compose.yml": `
+version: '3.3'
+services:
+  php_apache:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: php8_0_2_apache
+    depends_on:
+      - mysql
+    volumes:
+      - ./{{.ProjectName}}:/var/www/html/
+    ports:
+      - 8000:80
+  mysql:
+    container_name: mysql_
+    command: "--innodb_use_native_aio=0"
+    volumes:
+      - "./db_data:/var/lib/mysql"
+      - "./mysql_conf:/etc/mysql/conf.d"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: docker_{{.ProjectName}}
+    ports:
+      - 3306:3306
+`,
+		"php" + Slash() + "Dockerfile": `
+FROM php:8.0.2-apache
+RUN apt-get update && apt-get upgrade -y
+EXPOSE 80
+`,
+		"run.sh":                               "docker-compose up --build -d",
+		"{{.ProjectName}}" + Slash() + ".void": "*",
+	}
+
 	return configFiles
 }(tree{})

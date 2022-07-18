@@ -24,7 +24,7 @@ func ProcessCli() (exit bool) {
 			return true
 		}
 
-		alert := files.ProjectGeneration(projectPath, techno)
+		alert := files.ProjectGeneration(projectPath, techno, nil)
 
 		alertMessage := ""
 		if alert.Type == helpers.ERROR {

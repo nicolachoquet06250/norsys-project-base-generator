@@ -7,6 +7,7 @@ import (
 	"strings"
 	"test_go_webserver/configFiles"
 	. "test_go_webserver/helpers"
+	"test_go_webserver/pages/helpers"
 	"test_go_webserver/technos"
 )
 
@@ -64,17 +65,36 @@ func Create(path string, content string) error {
 	return nil
 }
 
-func ProjectGeneration(projectPath string, techno technos.Techno) (alert Alert) {
+func ProjectGeneration(projectPath string, techno technos.Techno, projectName *string) (alert Alert) {
 	var err error
 	technoName := techno.Name
 	technoValue := techno.Value
 
 	for path, content := range configFiles.ConfigFiles[technoName] {
-		err = Create(projectPath+Slash()+path, content)
-
+		path, err = helpers.ParseString("path", path, map[string]interface{}{
+			"ProjectName": &projectName,
+		})
 		if err != nil {
+			alert.Message = fmt.Sprintf("erreur template path: %s", err.Error())
+			alert.Type = ERROR
+			return alert
+		}
+
+		content, err = helpers.ParseString("content", content, map[string]interface{}{
+			"ProjectName": &projectName,
+		})
+		if err != nil {
+			alert.Message = fmt.Sprintf("erreur template content: %s", err.Error())
+			alert.Type = ERROR
+			return alert
+		}
+
+		err = Create(projectPath+Slash()+path, content)
+		if err != nil {
+			alert.Message = fmt.Sprintf("erreur: %s", err.Error())
+			alert.Type = ERROR
 			println(err.Error())
-			break
+			return alert
 		}
 	}
 
