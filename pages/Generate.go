@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"test_go_webserver/files"
 	. "test_go_webserver/helpers"
+	"test_go_webserver/history"
 	. "test_go_webserver/pages/helpers"
 	"test_go_webserver/technos"
 )
@@ -30,13 +31,20 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	var alert Alert
 	exists, _ := project.Exists()
 	if exists {
-		alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", *project.Name, project.Path), ERROR)
+		alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", project.Name, project.Path), ERROR)
 	} else {
 		alert = project.Create(techno)
 
-		//if alert.Type == SUCCESS {
-		//	_ = history.NewHistory(project).AddProject()
-		//}
+		if alert.Type == SUCCESS {
+			item := history.ItemHistory{
+				Path: project.Path,
+				Name: project.Name,
+			}
+			err := item.AddProject()
+			if err != nil {
+				alert = NewAlert(err.Error(), ERROR)
+			}
+		}
 	}
 
 	result, err := ParsePage("generate", generate, map[string]interface{}{

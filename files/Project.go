@@ -11,15 +11,13 @@ import (
 
 type (
 	FileSystem interface {
-		Create(path string, techno technos.Techno, name *string) (alert Alert)
-		Exists(path string) (exists bool, err error)
+		Create(techno technos.Techno) (alert Alert)
+		Exists() (exists bool, err error)
 	}
 
 	Project struct {
-		Path string  `json:"path"`
-		Name *string `json:"name"`
-
-		FileSystem
+		Path string `json:"path"`
+		Name string `json:"name"`
 	}
 )
 
@@ -31,15 +29,15 @@ func (p Project) Create(techno technos.Techno) (alert Alert) {
 
 	technoName := techno.Name
 	technoValue := techno.Value
-	completePath := p.Path + Slash() + *p.Name
+	completePath := p.Path + Slash() + p.Name
 
 	exists, err = p.Exists()
 	if err == nil && exists {
 		alert = Alert{
-			Message: fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", *p.Name, p.Path),
+			Message: fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", p.Name, p.Path),
 			Type:    ERROR,
 		}
-		println("Le projet " + *p.Name + " existe déjà dans le répertoire " + p.Path + " !")
+		println("Le projet " + p.Name + " existe déjà dans le répertoire " + p.Path + " !")
 
 		return alert
 	}
@@ -78,20 +76,18 @@ func (p Project) Create(techno technos.Techno) (alert Alert) {
 			Message: fmt.Sprintf("Le projet %s à bien été généré dans le répertoire %s !", technoName, completePath),
 			Type:    SUCCESS,
 		}
-		//println("Le projet " + technoName + " à bien été généré dans le répertoire " + completePath + " !")
 	} else {
 		alert = Alert{
 			Message: fmt.Sprintf("Une erreur est survenue lors de la génération du projet %s dans le répertoire %s !", technoValue, p.Path),
 			Type:    ERROR,
 		}
-		//println("Une erreur est survenue lors de la génération du projet " + technoValue + " dans le répertoire " + p.Path + " !")
 	}
 
 	return alert
 }
 
 func (p Project) Exists() (exists bool, err error) {
-	return NewDir(p.Path + Slash() + *p.Name).Exists()
+	return NewDir(p.Path + Slash() + p.Name).Exists()
 }
 
 func NewProject(path string, name *string) Project {
@@ -103,6 +99,6 @@ func NewProject(path string, name *string) Project {
 
 	return Project{
 		Path: path,
-		Name: name,
+		Name: *name,
 	}
 }

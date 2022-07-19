@@ -15,23 +15,70 @@ type (
 		UpdateProject(id int) error
 	}
 
-	History struct {
-		project files.Project
+	ItemHistory files.Project
 
-		IHistory
-	}
+	History []ItemHistory
 )
 
-var historyList []History
+var history History
 
-func NewHistory(project files.Project) History {
-	username := func() string {
-		u, _ := user.Current()
-		return u.Username
-	}()
+func (h ItemHistory) AddProject() error {
+	hist := GetHistoryList()
+	var oldCmp int = len(*hist)
+	*hist = append(*hist, h)
+	var newCmp int = len(*hist)
+	if oldCmp == newCmp {
+		return fmt.Errorf("impossible d'ajouter le projet %s à l'historique", h.Name)
+	}
 
-	historyFileName := "npbg-history.json"
-	var historyFilePath string
+	jsonV, err := json.Marshal(*hist)
+	if err != nil {
+		return err
+	}
+
+	var (
+		username string = func() string {
+			u, _ := user.Current()
+			return u.Username
+		}()
+		historyFileName string = "npbg-history.json"
+		historyFilePath string
+	)
+
+	if helpers.IsWindows() {
+		historyFilePath = helpers.RootPath() + "npbg"
+	} else {
+		historyFilePath = helpers.RootPath() + "home" + helpers.Slash() + username + helpers.Slash() + "npbg"
+	}
+
+	file := files.NewFile(historyFilePath + helpers.Slash() + historyFileName)
+
+	err = file.Update(string(jsonV))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h ItemHistory) RemoveProject(id int) error {
+	return nil
+}
+
+func (h ItemHistory) UpdateProject(id int) error {
+	return nil
+}
+
+func GetHistoryList() *History {
+	var (
+		username string = func() string {
+			u, _ := user.Current()
+			return u.Username
+		}()
+		historyFileName string = "npbg-history.json"
+		historyFilePath string
+	)
+
 	if helpers.IsWindows() {
 		historyFilePath = helpers.RootPath() + "npbg"
 	} else {
@@ -49,43 +96,15 @@ func NewHistory(project files.Project) History {
 	}
 
 	historyFileContent, err = file.GetContent()
+	if err == nil {
+		err = json.Unmarshal([]byte(historyFileContent), &history)
 
-	println(historyFileContent)
-
-	err = json.Unmarshal([]byte(historyFileContent), &historyList)
-
-	fmt.Printf("History : %+v, %d \n", &historyList, len(historyList))
-
-	if err != nil {
+		if err != nil {
+			println(err.Error())
+		}
+	} else {
 		println(err.Error())
 	}
 
-	for _, history := range historyList {
-		if history.project.Name == nil {
-			println("Path : ", history.project.Path)
-		} else {
-			println(
-				"Path : ", history.project.Path,
-				"Name : ", *history.project.Name,
-			)
-		}
-	}
-
-	d, _ := json.Marshal(historyList)
-
-	println(d)
-
-	return History{project: project}
-}
-
-func (h History) AddProject() error {
-	return nil
-}
-
-func (h History) RemoveProject(id int) error {
-	return nil
-}
-
-func (h History) UpdateProject(id int) error {
-	return nil
+	return &history
 }

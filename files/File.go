@@ -14,12 +14,11 @@ type (
 		Create(content string, recursive bool) error
 		Is() bool
 		GetContent() (content string, err error)
+		Update(content string) error
 	}
 
 	File struct {
 		Path string
-
-		FileSystemFile
 	}
 )
 
@@ -91,6 +90,24 @@ func (f File) Is() bool {
 func (f File) GetContent() (content string, err error) {
 	c, e := os.ReadFile(f.Path)
 	return string(c), e
+}
+
+func (f File) Update(content string) error {
+	// Read Write Mode
+	file, err := os.OpenFile(f.Path, os.O_RDWR, 0644)
+
+	if err != nil {
+		return fmt.Errorf("failed opening file: %s", err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteAt([]byte(content), 0) // Write at 0 beginning
+	if err != nil {
+		return fmt.Errorf("failed writing to file: %s", err)
+	}
+	//fmt.Printf("\nLength: %d bytes", l)
+	//fmt.Printf("\nFile Name: %s", file.Name())
+	return nil
 }
 
 func NewFile(path string) File {

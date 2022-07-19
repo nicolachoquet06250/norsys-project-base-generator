@@ -30,7 +30,7 @@ func ProcessCli() (exit bool) {
 		var alert Alert
 		exists, _ := project.Exists()
 		if exists {
-			alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", *project.Name, project.Path), ERROR)
+			alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", project.Name, project.Path), ERROR)
 		} else {
 			alert = project.Create(techno)
 		}
