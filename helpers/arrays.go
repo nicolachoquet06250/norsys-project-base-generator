@@ -25,13 +25,13 @@ func InArray(val interface{}, array interface{}) (exists bool, index int) {
 	return
 }
 
-func ArrayPop[T any](s *[]T) (v T, err error) {
+func ArrayPop[T any](s *[]T) (v *T, err error) {
 	if len(*s) == 0 {
 		var s T
-		return s, fmt.Errorf("can't remove last element of array")
+		return &s, fmt.Errorf("can't remove last element of array")
 	}
 	ep := len(*s) - 1
 	e := (*s)[ep]
 	*s = (*s)[:ep]
-	return e, nil
+	return &e, nil
 }

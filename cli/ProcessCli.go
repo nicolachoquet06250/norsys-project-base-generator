@@ -1,9 +1,10 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"test_go_webserver/files"
-	"test_go_webserver/helpers"
+	. "test_go_webserver/helpers"
 	"test_go_webserver/technos"
 )
 
@@ -24,10 +25,18 @@ func ProcessCli() (exit bool) {
 			return true
 		}
 
-		alert := files.ProjectGeneration(projectPath, techno, nil)
+		project := files.NewProject(projectPath, nil)
+
+		var alert Alert
+		exists, _ := project.Exists()
+		if exists {
+			alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", *project.Name, project.Path), ERROR)
+		} else {
+			alert = project.Create(techno)
+		}
 
 		alertMessage := ""
-		if alert.Type == helpers.ERROR {
+		if alert.Type == ERROR {
 			alertMessage += "ERROR: "
 		}
 

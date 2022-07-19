@@ -2,6 +2,7 @@ package pages
 
 import (
 	_ "embed"
+	"fmt"
 	"log"
 	"net/http"
 	"test_go_webserver/files"
@@ -15,7 +16,7 @@ var generate string
 
 func Generate(w http.ResponseWriter, r *http.Request) {
 	projectName := r.URL.Query().Get("projectName")
-	projectPath := r.URL.Query().Get("path") + Slash() + projectName
+	projectPath := r.URL.Query().Get("path")
 	technoValue := r.URL.Query().Get("techno")
 	techno, technoErr := technos.FromValue(technoValue)
 
@@ -24,7 +25,15 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	alert := files.ProjectGeneration(projectPath, techno, &projectName)
+	project := files.NewProject(projectPath, &projectName)
+
+	var alert Alert
+	exists, _ := project.Exists()
+	if exists {
+		alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", *project.Name, project.Path), ERROR)
+	} else {
+		alert = project.Create(techno)
+	}
 
 	result, err := ParsePage("generate", generate, map[string]interface{}{
 		"PageTitle":   "Génération du projet",
