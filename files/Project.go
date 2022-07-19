@@ -9,17 +9,19 @@ import (
 	"test_go_webserver/technos"
 )
 
-type FileSystem interface {
-	Create(path string, techno technos.Techno, name *string) (alert Alert)
-	Exists(path string) (exists bool, err error)
-}
+type (
+	FileSystem interface {
+		Create(path string, techno technos.Techno, name *string) (alert Alert)
+		Exists(path string) (exists bool, err error)
+	}
 
-type Project struct {
-	Path string
-	Name *string
+	Project struct {
+		Path string  `json:"path"`
+		Name *string `json:"name"`
 
-	FileSystem
-}
+		FileSystem
+	}
+)
 
 func (p Project) Create(techno technos.Techno) (alert Alert) {
 	var (

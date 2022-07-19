@@ -12,5 +12,8 @@ func main() {
 		return
 	}
 
+	//projectName := "php-project"
+	//history.NewHistory(files.NewProject("C:\\Users\\NDZQ5522\\Desktop", &projectName))
+
 	server.Process(true, true)
 }

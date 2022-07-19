@@ -33,6 +33,10 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", *project.Name, project.Path), ERROR)
 	} else {
 		alert = project.Create(techno)
+
+		//if alert.Type == SUCCESS {
+		//	_ = history.NewHistory(project).AddProject()
+		//}
 	}
 
 	result, err := ParsePage("generate", generate, map[string]interface{}{

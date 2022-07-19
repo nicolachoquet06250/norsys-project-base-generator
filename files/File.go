@@ -8,17 +8,20 @@ import (
 	. "test_go_webserver/helpers"
 )
 
-type FileSystemFile interface {
-	Exists(path string) (exists bool, err error)
-	Create(path string, content string, recursive bool) error
-	Is(path string) bool
-}
+type (
+	FileSystemFile interface {
+		Exists() (exists bool, err error)
+		Create(content string, recursive bool) error
+		Is() bool
+		GetContent() (content string, err error)
+	}
 
-type File struct {
-	Path string
+	File struct {
+		Path string
 
-	FileSystemFile
-}
+		FileSystemFile
+	}
+)
 
 func (f File) Exists() (exists bool, err error) {
 	f.Path = strings.ReplaceAll(f.Path, Slash()+Slash(), Slash())
@@ -83,6 +86,11 @@ func (f File) Is() bool {
 		return true
 	}
 	return false
+}
+
+func (f File) GetContent() (content string, err error) {
+	c, e := os.ReadFile(f.Path)
+	return string(c), e
 }
 
 func NewFile(path string) File {

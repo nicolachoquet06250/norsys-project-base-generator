@@ -8,17 +8,19 @@ import (
 	. "test_go_webserver/helpers"
 )
 
-type FileSystemDirectory interface {
-	Exists(path string) (exists bool, err error)
-	Create(path string) error
-	Is(path string) bool
-}
+type (
+	FileSystemDirectory interface {
+		Exists() (exists bool, err error)
+		Create() error
+		Is() bool
+	}
 
-type Dir struct {
-	Path string
+	Dir struct {
+		Path string
 
-	FileSystemDirectory
-}
+		FileSystemDirectory
+	}
+)
 
 func (d Dir) Exists() (exists bool, err error) {
 	d.Path = strings.ReplaceAll(d.Path, Slash()+Slash(), Slash())
