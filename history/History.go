@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/user"
+	"strings"
 	"test_go_webserver/files"
 	"test_go_webserver/helpers"
+	"test_go_webserver/technos"
 )
 
 type (
@@ -20,13 +22,13 @@ type (
 	History []ItemHistory
 )
 
-var history History
+var history = &History{}
 
 func (h ItemHistory) AddProject() error {
 	hist := GetHistoryList()
-	var oldCmp int = len(*hist)
+	var oldCmp = len(*hist)
 	*hist = append(*hist, h)
-	var newCmp int = len(*hist)
+	var newCmp = len(*hist)
 	if oldCmp == newCmp {
 		return fmt.Errorf("impossible d'ajouter le projet %s à l'historique", h.Name)
 	}
@@ -37,11 +39,11 @@ func (h ItemHistory) AddProject() error {
 	}
 
 	var (
-		username string = func() string {
+		username = func() string {
 			u, _ := user.Current()
 			return u.Username
 		}()
-		historyFileName string = "npbg-history.json"
+		historyFileName = "npbg-history.json"
 		historyFilePath string
 	)
 
@@ -97,7 +99,7 @@ func GetHistoryList() *History {
 
 	historyFileContent, err = file.GetContent()
 	if err == nil {
-		err = json.Unmarshal([]byte(historyFileContent), &history)
+		err = json.Unmarshal([]byte(historyFileContent), history)
 
 		if err != nil {
 			println(err.Error())
@@ -106,5 +108,19 @@ func GetHistoryList() *History {
 		println(err.Error())
 	}
 
-	return &history
+	return history
+}
+
+func NewItem(path string, name *string, techno technos.Techno) ItemHistory {
+	if name == nil {
+		splitted := strings.Split(path, helpers.Slash())
+		name, _ = helpers.ArrayPop(&splitted)
+		path = strings.Join(splitted, helpers.Slash())
+	}
+
+	return ItemHistory{
+		Path:   path,
+		Name:   *name,
+		Techno: techno,
+	}
 }

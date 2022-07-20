@@ -15,6 +15,8 @@ func Routes() {
 		Methods(httpMethods.GET)
 	r.HandleFunc("/help", Help).
 		Methods(httpMethods.GET)
+	r.HandleFunc("/generated", MyGeneratedProjects).
+		Methods(httpMethods.GET)
 	r.HandleFunc("/assets/{file:[a-z_-]+}.css", CssAssets).
 		Methods(httpMethods.GET)
 	r.HandleFunc("/bootstrap/b.css", BootstrapCssAssets).

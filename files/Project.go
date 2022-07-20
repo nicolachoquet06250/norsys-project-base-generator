@@ -16,19 +16,20 @@ type (
 	}
 
 	Project struct {
-		Path string `json:"path"`
-		Name string `json:"name"`
+		Path   string         `json:"path"`
+		Name   string         `json:"name"`
+		Techno technos.Techno `json:"techno"`
 	}
 )
 
-func (p Project) Create(techno technos.Techno) (alert Alert) {
+func (p Project) Create() (alert Alert) {
 	var (
 		err    error
 		exists bool
 	)
 
-	technoName := techno.Name
-	technoValue := techno.Value
+	technoName := p.Techno.Name
+	technoValue := p.Techno.Value
 	completePath := p.Path + Slash() + p.Name
 
 	exists, err = p.Exists()
@@ -90,7 +91,7 @@ func (p Project) Exists() (exists bool, err error) {
 	return NewDir(p.Path + Slash() + p.Name).Exists()
 }
 
-func NewProject(path string, name *string) Project {
+func NewProject(path string, name *string, techno technos.Techno) Project {
 	if name == nil {
 		splitted := strings.Split(path, Slash())
 		name, _ = ArrayPop(&splitted)
@@ -98,7 +99,8 @@ func NewProject(path string, name *string) Project {
 	}
 
 	return Project{
-		Path: path,
-		Name: *name,
+		Path:   path,
+		Name:   *name,
+		Techno: techno,
 	}
 }

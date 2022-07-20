@@ -26,20 +26,17 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project := files.NewProject(projectPath, &projectName)
+	project := files.NewProject(projectPath, &projectName, techno)
 
 	var alert Alert
 	exists, _ := project.Exists()
 	if exists {
 		alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", project.Name, project.Path), ERROR)
 	} else {
-		alert = project.Create(techno)
+		alert = project.Create()
 
 		if alert.Type == SUCCESS {
-			item := history.ItemHistory{
-				Path: project.Path,
-				Name: project.Name,
-			}
+			item := history.NewItem(project.Path, &project.Name, project.Techno)
 			err := item.AddProject()
 			if err != nil {
 				alert = NewAlert(err.Error(), ERROR)

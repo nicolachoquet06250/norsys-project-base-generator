@@ -5,6 +5,7 @@ import (
 	"os"
 	"test_go_webserver/files"
 	. "test_go_webserver/helpers"
+	"test_go_webserver/history"
 	"test_go_webserver/technos"
 )
 
@@ -25,14 +26,22 @@ func ProcessCli() (exit bool) {
 			return true
 		}
 
-		project := files.NewProject(projectPath, nil)
+		project := files.NewProject(projectPath, nil, techno)
 
 		var alert Alert
 		exists, _ := project.Exists()
 		if exists {
 			alert = NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", project.Name, project.Path), ERROR)
 		} else {
-			alert = project.Create(techno)
+			alert = project.Create()
+
+			if alert.Type == SUCCESS {
+				item := history.NewItem(project.Path, &project.Name, project.Techno)
+				err := item.AddProject()
+				if err != nil {
+					alert = NewAlert(err.Error(), ERROR)
+				}
+			}
 		}
 
 		alertMessage := ""

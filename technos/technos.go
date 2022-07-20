@@ -44,8 +44,8 @@ func IsTechno(techno string) bool {
 }
 
 type Techno struct {
-	Name  string
-	Value string
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 func All() []Techno {
