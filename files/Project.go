@@ -11,7 +11,8 @@ import (
 
 type (
 	FileSystem interface {
-		Create(techno technos.Techno) (alert Alert)
+		Create() (alert Alert)
+		Remove(id int) (alert Alert)
 		Exists() (exists bool, err error)
 	}
 
@@ -34,10 +35,7 @@ func (p Project) Create() (alert Alert) {
 
 	exists, err = p.Exists()
 	if err == nil && exists {
-		alert = Alert{
-			Message: fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", p.Name, p.Path),
-			Type:    ERROR,
-		}
+		alert := NewAlert(fmt.Sprintf("Le projet %s existe déjà dans le répertoire %s !", p.Name, p.Path), ERROR)
 		println("Le projet " + p.Name + " existe déjà dans le répertoire " + p.Path + " !")
 
 		return alert
@@ -48,43 +46,44 @@ func (p Project) Create() (alert Alert) {
 
 		_p, err = ParseString("path", _p, params)
 		if err != nil {
-			return Alert{
-				Message: fmt.Sprintf("erreur template path: %s", err.Error()),
-				Type:    ERROR,
-			}
+			return NewAlert(fmt.Sprintf("erreur template path: %s", err.Error()), ERROR)
 		}
 
 		content, err = ParseString("content", content, params)
 		if err != nil {
-			return Alert{
-				Message: fmt.Sprintf("erreur template content: %s", err.Error()),
-				Type:    ERROR,
-			}
+			return NewAlert(fmt.Sprintf("erreur template content: %s", err.Error()), ERROR)
 		}
 
 		err = NewFile(completePath+Slash()+_p).Create(content, true)
 		if err != nil {
-			return Alert{
-				Message: fmt.Sprintf("erreur: %s", err.Error()),
-				Type:    ERROR,
-			}
+			return NewAlert(fmt.Sprintf("erreur: %s", err.Error()), ERROR)
 		}
 	}
 
 	exists, err = p.Exists()
 	if err == nil && exists {
-		alert = Alert{
-			Message: fmt.Sprintf("Le projet %s à bien été généré dans le répertoire %s !", technoName, completePath),
-			Type:    SUCCESS,
-		}
+		alert = NewAlert(
+			fmt.Sprintf("Le projet %s à bien été généré dans le répertoire %s !", technoName, completePath),
+			SUCCESS,
+		)
 	} else {
-		alert = Alert{
-			Message: fmt.Sprintf("Une erreur est survenue lors de la génération du projet %s dans le répertoire %s !", technoValue, p.Path),
-			Type:    ERROR,
-		}
+		alert = NewAlert(
+			fmt.Sprintf("Une erreur est survenue lors de la génération du projet %s dans le répertoire %s !", technoValue, p.Path),
+			ERROR,
+		)
 	}
 
 	return alert
+}
+
+func (p Project) Remove() (alert Alert) {
+	err := NewDir(p.Path + Slash() + p.Name).Remove()
+
+	if err != nil {
+		return NewAlert(err.Error(), ERROR)
+	}
+
+	return NewAlert("Le projet as été supprimé avec succès", SUCCESS)
 }
 
 func (p Project) Exists() (exists bool, err error) {

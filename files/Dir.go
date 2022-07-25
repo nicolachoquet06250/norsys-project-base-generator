@@ -12,13 +12,12 @@ type (
 	FileSystemDirectory interface {
 		Exists() (exists bool, err error)
 		Create() error
+		Remove() error
 		Is() bool
 	}
 
 	Dir struct {
 		Path string
-
-		FileSystemDirectory
 	}
 )
 
@@ -50,6 +49,14 @@ func (d Dir) Create() error {
 	}
 
 	return nil
+}
+
+func (d Dir) Remove() error {
+	d.Path = strings.ReplaceAll(d.Path, Slash()+Slash(), Slash())
+
+	err := os.RemoveAll(d.Path)
+
+	return err
 }
 
 func (d Dir) Is() bool {

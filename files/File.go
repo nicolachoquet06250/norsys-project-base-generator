@@ -12,6 +12,8 @@ type (
 	FileSystemFile interface {
 		Exists() (exists bool, err error)
 		Create(content string, recursive bool) error
+		Remove() error
+		Empty() error
 		Is() bool
 		GetContent() (content string, err error)
 		Update(content string) error
@@ -92,6 +94,10 @@ func (f File) GetContent() (content string, err error) {
 	return string(c), e
 }
 
+func (f File) Empty() error {
+	return os.Truncate(f.Path, 0)
+}
+
 func (f File) Update(content string) error {
 	// Read Write Mode
 	file, err := os.OpenFile(f.Path, os.O_RDWR, 0644)
@@ -108,6 +114,10 @@ func (f File) Update(content string) error {
 	//fmt.Printf("\nLength: %d bytes", l)
 	//fmt.Printf("\nFile Name: %s", file.Name())
 	return nil
+}
+
+func (f File) Remove() error {
+	return os.Remove(f.Path + Slash())
 }
 
 func NewFile(path string) File {

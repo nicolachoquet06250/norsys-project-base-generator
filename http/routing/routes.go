@@ -17,6 +17,8 @@ func Routes() {
 		Methods(httpMethods.GET)
 	r.HandleFunc("/generated", MyGeneratedProjects).
 		Methods(httpMethods.GET)
+	r.HandleFunc("/generated", RemoveHistoryProject).
+		Methods(httpMethods.DELETE)
 	r.HandleFunc("/assets/{file:[a-z_-]+}.css", CssAssets).
 		Methods(httpMethods.GET)
 	r.HandleFunc("/bootstrap/b.css", BootstrapCssAssets).

@@ -8,6 +8,47 @@
     <title>Mes projets générés</title>
 
     <link rel="stylesheet" href="assets/help.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+
+    <script>
+        /**
+         * @param {string} project.technoName
+         * @param {string} project.technoValue
+         * @param {string} project.name
+         * @param {string} project.path
+         */
+        function deleteProject(project, button) {
+            fetch('', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: project.name,
+                    path: project.path,
+                    techno: {
+                        name: project.technoName,
+                        value: project.technoValue
+                    }
+                })
+            }).then(r => r.json())
+                .then(json => {
+                    button.parentElement.remove();
+
+                    if (json === null || json.length === 0) {
+                        const span = document.createElement('span')
+                        span.innerHTML = "Aucun projet n'a été généré pour le moment";
+                        document.querySelector('main').appendChild(span)
+                    }
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+        }
+    </script>
 </head>
 <body>
     <nav class="nav nav-pills p-2">
@@ -20,11 +61,24 @@
 
         <ul>
             {{range .Projects}}
-            <li>
-                {{.Name}} : {{.Techno.Name}}
+            <li id="{{.Path}}-{{.Name}}--{{.Techno.Value}}">
+                {{.Name}} : <b>{{.Techno.Name}}</b>
+                <button type="button" class="btn btn-outline-danger"
+                        onclick="deleteProject({
+                            technoName: '{{.Techno.Name}}',
+                            technoValue: '{{.Techno.Value}}',
+                            name: '{{.Name}}',
+                            path: '{{.Path}}'
+                        }, this)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </li>
             {{end}}
         </ul>
+
+        {{if .EmptyProjects}}
+        <span> Aucun projet n'a été généré pour le moment </span>
+        {{end}}
     </main>
 </body>
 </html>

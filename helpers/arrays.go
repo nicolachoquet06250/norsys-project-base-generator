@@ -35,3 +35,13 @@ func ArrayPop[T any](s *[]T) (v *T, err error) {
 	*s = (*s)[:ep]
 	return &e, nil
 }
+
+func ArrayFilter[T any](t []T, cb func(e T, i int) bool) (result []T) {
+	for i, e := range t {
+		if cb(e, i) {
+			result = append(result, e)
+		}
+	}
+
+	return result
+}
