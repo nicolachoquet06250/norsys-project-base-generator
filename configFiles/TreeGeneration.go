@@ -2,7 +2,7 @@ package configFiles
 
 import (
 	. "test_go_webserver/helpers"
-	"test_go_webserver/technos"
+	technosEnum "test_go_webserver/technos/enum"
 )
 
 type treeElement = map[string]string
@@ -10,7 +10,7 @@ type tree = map[string]treeElement
 type treeGeneration struct{}
 
 func (g treeGeneration) javaScript(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.JavaScript] = treeElement{
+	(*configFiles)[technosEnum.JavaScript] = treeElement{
 		"site" + Slash() + "index.html": `<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -48,7 +48,7 @@ COPY ./site/ /usr/local/apache2/htdocs/`,
 }
 
 func (g treeGeneration) react15(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.React15] = treeElement{
+	(*configFiles)[technosEnum.React15] = treeElement{
 		"Dockerfile": `
 FROM node:latest
 WORKDIR /app
@@ -67,7 +67,7 @@ CMD ["yarn","start"]!`,
 }
 
 func (g treeGeneration) react16(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.React16] = treeElement{
+	(*configFiles)[technosEnum.React16] = treeElement{
 		"Dockerfile": `
 FROM node:latest
 WORKDIR /app
@@ -86,7 +86,7 @@ CMD ["yarn","start"]!`,
 }
 
 func (g treeGeneration) react17(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.React17] = treeElement{
+	(*configFiles)[technosEnum.React17] = treeElement{
 		"Dockerfile": `
 FROM node:latest
 WORKDIR /app
@@ -105,7 +105,7 @@ CMD ["yarn","start"]!`,
 }
 
 func (g treeGeneration) react18(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.React18] = treeElement{
+	(*configFiles)[technosEnum.React18] = treeElement{
 		"Dockerfile": `
 FROM node:latest
 WORKDIR /app
@@ -124,7 +124,7 @@ CMD ["yarn","start"]!`,
 }
 
 func (g treeGeneration) vue2(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.Vue2] = treeElement{
+	(*configFiles)[technosEnum.Vue2] = treeElement{
 		"Dockerfile": `
 FROM node:lts-alpine
 # installe un simple serveur http pour servir un contenu statique
@@ -151,7 +151,7 @@ CMD [ "http-server", "dist" ]
 }
 
 func (g treeGeneration) vue3(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.Vue3] = treeElement{
+	(*configFiles)[technosEnum.Vue3] = treeElement{
 		"Dockerfile": `
 FROM node:lts-alpine
 # installe un simple serveur http pour servir un contenu statique
@@ -178,7 +178,7 @@ CMD [ "http-server", "dist" ]
 }
 
 func (g treeGeneration) angular(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.Angular] = treeElement{
+	(*configFiles)[technosEnum.Angular] = treeElement{
 		"Dockerfile": `
 FROM node:11.15.0-stretch
 RUN npm install -g @angular/cli && ng config -g cli.packageManager yarn
@@ -202,7 +202,7 @@ services:
 }
 
 func (g treeGeneration) php(configFiles *tree) *treeGeneration {
-	(*configFiles)[technos.PHP] = treeElement{
+	(*configFiles)[technosEnum.PHP] = treeElement{
 		"docker-compose.yml": `
 version: '3.3'
 services:

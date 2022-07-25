@@ -2,42 +2,20 @@ package technos
 
 import (
 	"fmt"
+	"test_go_webserver/configFiles"
 	. "test_go_webserver/helpers"
-)
-
-const (
-	JavaScript = "JavaScript Vanilla"
-
-	React15 = "JavaScript React v15"
-	React16 = "JavaScript React v16"
-	React17 = "JavaScript React v17"
-	React18 = "JavaScript React v18"
-
-	Vue2 = "JavaScript Vue v2"
-	Vue3 = "JavaScript Vue v3"
-
-	TypeScript = "TypeScript Vanilla"
-	Angular    = "TypeScript Angular"
-
-	PHP     = "PHP From Scratch"
-	Laravel = "PHP Laravel"
-	Symfony = "PHP Symfony"
-
-	Go = "Go"
-
-	Java   = "Java From Scratch"
-	Spring = "Java Spring"
+	"test_go_webserver/technos/enum"
 )
 
 func IsTechno(techno string) bool {
 	exists, _ := InArray(techno, []string{
-		JavaScript,
-		React15, React16, React17, React18,
-		Vue2, Vue3,
-		TypeScript, Angular,
-		PHP, Laravel, Symfony,
-		Go,
-		Java, Spring,
+		enum.JavaScript,
+		enum.React15, enum.React16, enum.React17, enum.React18,
+		enum.Vue2, enum.Vue3,
+		enum.TypeScript, enum.Angular,
+		enum.PHP, enum.Laravel, enum.Symfony,
+		enum.Go,
+		enum.Java, enum.Spring,
 	})
 
 	return exists
@@ -51,72 +29,94 @@ type Techno struct {
 func All() []Techno {
 	return []Techno{
 		{
-			Name:  JavaScript,
+			Name:  enum.JavaScript,
 			Value: "javascript",
 		},
 
 		{
-			Name:  React15,
+			Name:  enum.React15,
 			Value: "react-15",
 		},
 		{
-			Name:  React16,
+			Name:  enum.React16,
 			Value: "react-16",
 		},
 		{
-			Name:  React17,
+			Name:  enum.React17,
 			Value: "react-17",
 		},
 		{
-			Name:  React18,
+			Name:  enum.React18,
 			Value: "react-18",
 		},
 
 		{
-			Name:  Vue2,
+			Name:  enum.Vue2,
 			Value: "vue-2",
 		},
 		{
-			Name:  Vue3,
+			Name:  enum.Vue3,
 			Value: "vue-3",
 		},
 
 		{
-			Name:  TypeScript,
+			Name:  enum.TypeScript,
 			Value: "typescript",
 		},
 		{
-			Name:  Angular,
+			Name:  enum.Angular,
 			Value: "angular",
 		},
 
 		{
-			Name:  PHP,
+			Name:  enum.PHP,
 			Value: "php-from-scratch",
 		},
 		{
-			Name:  Laravel,
+			Name:  enum.Laravel,
 			Value: "laravel",
 		},
 		{
-			Name:  Symfony,
+			Name:  enum.Symfony,
 			Value: "symfony",
 		},
 
 		{
-			Name:  Go,
+			Name:  enum.Go,
 			Value: "go",
 		},
 
 		{
-			Name:  Java,
+			Name:  enum.Java,
 			Value: "java",
 		},
 		{
-			Name:  Spring,
+			Name:  enum.Spring,
 			Value: "spring",
 		},
 	}
+}
+
+func AllAvailable() (t []Techno) {
+	all := All()
+
+	for k, _ := range configFiles.ConfigFiles {
+		present := false
+		var n int
+
+		for i, e := range all {
+			if e.Name == k {
+				present = true
+				n = i
+				break
+			}
+		}
+		if present {
+			t = append(t, all[n])
+		}
+	}
+
+	return t
 }
 
 func FromValue(value string) (Techno, error) {

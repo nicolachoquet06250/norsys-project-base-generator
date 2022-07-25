@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"test_go_webserver/helpers"
 	"test_go_webserver/technos"
 )
 
@@ -73,7 +74,8 @@ type PotentiallySelectedTechno struct {
 }
 
 func GetTechnoList(techno *technos.Techno) []PotentiallySelectedTechno {
-	list := technos.All()
+	list := technos.AllAvailable()
+	list = helpers.ArrayReverse(list)
 	var finalList []PotentiallySelectedTechno
 
 	for _, v := range list {

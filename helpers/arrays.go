@@ -45,3 +45,23 @@ func ArrayFilter[T any](t []T, cb func(e T, i int) bool) (result []T) {
 
 	return result
 }
+
+func ArrayReverse[T any](input []T) (result []T) {
+	keys := make([]int, len(input))
+
+	i := 0
+	for k := range input {
+		keys[i] = k
+		i++
+	}
+
+	max := len(keys) - 1
+	cmp := 0
+
+	for range keys {
+		result = append(result, input[max-cmp])
+		cmp++
+	}
+
+	return result
+}
