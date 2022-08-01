@@ -15,10 +15,10 @@ var generatedPage string
 func MyGeneratedProjects(w http.ResponseWriter, r *http.Request) {
 	h := history.GetHistoryList()
 
-	result, _ := ParsePage("generated", generatedPage, map[string]interface{}{
+	result, _ := ParsePage("generated", generatedPage, &map[string]interface{}{
 		"Projects":      h,
 		"EmptyProjects": h.IsEmpty(),
-	})
+	}, menu)
 
 	Text(&w, result)
 }

@@ -44,7 +44,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	result, err := ParsePage("generate", generate, map[string]interface{}{
+	result, err := ParsePage("generate", generate, &map[string]interface{}{
 		"PageTitle":   "Génération du projet",
 		"CssFile":     "assets/generate.css",
 		"ProjectPath": projectPath,
@@ -52,7 +52,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		"Technos":     GetTechnoList(&techno),
 		"IsGenerate":  true,
 		"Alert":       alert,
-	})
+	}, menu)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -10,8 +10,11 @@ import (
 //go:embed templates/index.html
 var home string
 
+//go:embed templates/menu.html
+var menu string
+
 func Home(w http.ResponseWriter, r *http.Request) {
-	result, err := ParsePage("index", home, map[string]interface{}{
+	result, err := ParsePage("index", home, &map[string]interface{}{
 		"PageTitle":   nil,
 		"CssFile":     "assets/home.css",
 		"ProjectPath": nil,
@@ -19,7 +22,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		"Technos":     GetTechnoList(nil),
 		"IsGenerate":  false,
 		"Alert":       nil,
-	})
+	}, menu)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -44,12 +44,12 @@ func (p Project) Create() (alert Alert) {
 	for _p, content := range configFiles.ConfigFiles[technoName] {
 		params := map[string]interface{}{"ProjectName": &p.Name}
 
-		_p, err = ParseString("path", _p, params)
+		_p, err = ParseString("path", _p, &params)
 		if err != nil {
 			return NewAlert(fmt.Sprintf("erreur template path: %s", err.Error()), ERROR)
 		}
 
-		content, err = ParseString("content", content, params)
+		content, err = ParseString("content", content, &params)
 		if err != nil {
 			return NewAlert(fmt.Sprintf("erreur template content: %s", err.Error()), ERROR)
 		}

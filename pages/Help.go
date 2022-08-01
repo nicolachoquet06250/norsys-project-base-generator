@@ -11,10 +11,10 @@ import (
 var help string
 
 func Help(w http.ResponseWriter, r *http.Request) {
-	result, _ := ParsePage("help", help, map[string]interface{}{
+	result, _ := ParsePage("help", help, &map[string]interface{}{
 		"Path": r.URL.Path,
 		"Home": r.URL.Path == "/",
 		"Port": portChoice.ChosenPort,
-	})
+	}, menu)
 	Text(&w, result)
 }

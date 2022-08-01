@@ -51,25 +51,29 @@
     </script>
 </head>
 <body>
-    <nav class="nav nav-pills p-2">
-        <a class="nav-link" href="/">Accueil</a>
-        <a class="nav-link active" aria-current="page" href="/generated">Mes projets</a>
-        <a class="nav-link" href="/help">Aide</a>
-    </nav>
+    {{ .Menu }}
+
     <main class="container">
         <h1> Projets générés </h1>
 
-        <ul>
+        <ul class="list-group">
             {{range .Projects}}
-            <li id="{{.Path}}-{{.Name}}--{{.Techno.Value}}">
-                {{.Name}} : <b>{{.Techno.Name}}</b>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">
+                        {{.Name}}
+                    </div>
+
+                    {{.Techno.Name}}
+                </div>
+
                 <button type="button" class="btn btn-outline-danger"
                         onclick="deleteProject({
-                            technoName: '{{.Techno.Name}}',
-                            technoValue: '{{.Techno.Value}}',
-                            name: '{{.Name}}',
-                            path: '{{.Path}}'
-                        }, this)">
+                                technoName: '{{.Techno.Name}}',
+                                technoValue: '{{.Techno.Value}}',
+                                name: '{{.Name}}',
+                                path: '{{.Path}}'
+                                }, this)">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </li>

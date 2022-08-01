@@ -84,7 +84,7 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 			queryStringParams[param] = query.Get(param)
 		}
 
-		result, _ := ParsePage("css", file, queryStringParams)
+		result, _ := ParsePage("css", file, &queryStringParams, "")
 
 		Css(&w, result)
 	} else {

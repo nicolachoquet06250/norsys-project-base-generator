@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"test_go_webserver/cli"
 	"test_go_webserver/server"
 )
@@ -12,5 +13,5 @@ func main() {
 		return
 	}
 
-	server.Process(true, true)
+	server.Process(true, os.Getenv("OPEN_BROWSER") == "1" || os.Getenv("OPEN_BROWSER") == "")
 }

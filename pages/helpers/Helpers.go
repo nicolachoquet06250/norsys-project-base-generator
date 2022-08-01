@@ -9,7 +9,7 @@ import (
 	"test_go_webserver/technos"
 )
 
-func ParseString(name string, str string, vars map[string]interface{}) (r string, e error) {
+func ParseString(name string, str string, vars *map[string]interface{}) (r string, e error) {
 	t, err := template.New(name).Parse(str)
 	if err != nil {
 		return "", err
@@ -24,14 +24,33 @@ func ParseString(name string, str string, vars map[string]interface{}) (r string
 	return tmpWriter.String(), nil
 }
 
-func ParsePage(name string, tpl string, vars map[string]interface{}) (string, error) {
+func ParseMenu(currentPage string, menu string) (template.HTML, error) {
+	m, err := template.New("menu.html").Parse(menu)
+	if err != nil {
+		return "", err
+	}
+
+	tmpWriter := new(strings.Builder)
+	err = m.Execute(tmpWriter, map[string]interface{}{
+		"CurrentPage": currentPage,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return template.HTML(tmpWriter.String()), nil
+}
+
+func ParsePage(name string, tpl string, vars *map[string]interface{}, menu string) (string, error) {
+	(*vars)["Menu"], _ = ParseMenu(name, menu)
+
 	t, err := template.New(name + ".html").Parse(tpl)
 	if err != nil {
 		return "", err
 	}
 
 	tmpWriter := new(strings.Builder)
-	err = t.Execute(tmpWriter, vars)
+	err = t.Execute(tmpWriter, &vars)
 	if err != nil {
 		return "", err
 	}
@@ -39,8 +58,8 @@ func ParsePage(name string, tpl string, vars map[string]interface{}) (string, er
 	return tmpWriter.String(), nil
 }
 
-func ParsePageWOVars(name string, tpl string) (string, error) {
-	return ParsePage(name, tpl, map[string]interface{}{})
+func ParsePageWOVars(name string, tpl string, menu string) (string, error) {
+	return ParsePage(name, tpl, &map[string]interface{}{}, menu)
 }
 
 func Text(w *http.ResponseWriter, r string) {
