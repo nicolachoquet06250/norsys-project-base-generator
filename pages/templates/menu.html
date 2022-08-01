@@ -1,5 +1,23 @@
 <nav class="nav nav-pills p-2">
-    <a class="nav-link {{if eq .CurrentPage "index"}}active{{end}}" {{if eq .CurrentPage "index"}} aria-current="page" {{end}} href="/">Accueil</a>
-    <a class="nav-link {{if eq .CurrentPage "generated"}}active{{end}}" {{if eq .CurrentPage "generated"}} aria-current="page" {{end}} href="/generated">Mes projets</a>
-    <a class="nav-link {{if eq .CurrentPage "help"}}active{{end}}" {{if eq .CurrentPage "help"}} aria-current="page" {{end}} href="/help">Aide</a>
+    <a class="nav-link {{ if or (eq .CurrentPage "index") (eq .CurrentPage "generate") }}active{{end}}"
+        {{ if or (eq .CurrentPage "index") (eq .CurrentPage "generate") }}
+            aria-current="page"
+        {{end}}
+       href="/">
+        Accueil
+    </a>
+
+    <a class="nav-link {{if eq .CurrentPage "generated"}}active{{end}}"
+        {{if eq .CurrentPage "generated"}}
+            aria-current="page"
+        {{end}}
+       href="/generated">Mes projets</a>
+
+    <a class="nav-link {{if eq .CurrentPage "help"}}active{{end}}"
+        {{if eq .CurrentPage "help"}}
+            aria-current="page"
+        {{end}}
+       href="/help">
+        Aide
+    </a>
 </nav>
