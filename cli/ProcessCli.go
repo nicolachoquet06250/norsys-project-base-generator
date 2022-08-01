@@ -9,7 +9,7 @@ import (
 	"test_go_webserver/technos"
 )
 
-func ProcessCli() (exit bool) {
+func Process() (exit bool) {
 	if len(os.Args) > 1 {
 		args := os.Args[1:]
 
