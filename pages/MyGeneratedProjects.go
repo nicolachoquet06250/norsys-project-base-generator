@@ -15,9 +15,38 @@ var generatedPage string
 func MyGeneratedProjects(w http.ResponseWriter, r *http.Request) {
 	h := history.GetHistoryList()
 
-	result, _ := ParsePage("generated", generatedPage, &map[string]interface{}{
-		"Projects":      h,
-		"EmptyProjects": h.IsEmpty(),
+	result, _ := ShowHtmlPage(Page{
+		CurrentPage: "generated",
+		Template:    generatedPage,
+		Title: Title{
+			Tab:  "Mes projets générés",
+			Page: "Projets générés",
+		},
+		CssFiles: CssFiles{
+			"assets/help.css",
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css",
+		},
+		MetaData: MetaData{
+			Meta{
+				Charset:   "UTF-8",
+				Name:      "",
+				Content:   "",
+				HttpEquiv: "",
+			},
+			Meta{
+				Charset:   "",
+				Name:      "viewport",
+				Content:   "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0",
+				HttpEquiv: "",
+			},
+			Meta{
+				Charset:   "",
+				Name:      "",
+				Content:   "ie=edge",
+				HttpEquiv: "X-UA-Compatible",
+			},
+		},
+		Vars: &map[string]interface{}{"Projects": h},
 	}, menu)
 
 	Text(&w, result)

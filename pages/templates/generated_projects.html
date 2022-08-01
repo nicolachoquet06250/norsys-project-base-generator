@@ -1,17 +1,19 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mes projets générés</title>
+    {{range .Page.MetaData}}
+        <meta
+                {{if not (eq .Charset "")}} charset="{{.Charset}}" {{end}}
+                {{if not (eq .Name "")}} name="{{.Name}}" {{end}}
+                {{if not (eq .HttpEquiv "")}} http-equiv="{{.HttpEquiv}}" {{end}}
+                {{if not (eq .Content "")}} content="{{.Content}}" {{end}}
+        />
+    {{end}}
+    <title> {{ .Page.Title.Tab }} </title>
 
-    <link rel="stylesheet" href="assets/help.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer" />
+    {{range .Page.CssFiles}}
+    <link rel="stylesheet" href="{{.}}">
+    {{end}}
 
     <script>
         /**
@@ -51,13 +53,13 @@
     </script>
 </head>
 <body>
-    {{ .Menu }}
+    {{ .Page.Menu }}
 
     <main class="container">
-        <h1> Projets générés </h1>
+        <h1> {{ .Page.Title.Page }} </h1>
 
         <ul class="list-group">
-            {{range .Projects}}
+            {{range .Page.Vars.Projects}}
             <li class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">
@@ -80,7 +82,7 @@
             {{end}}
         </ul>
 
-        {{if .EmptyProjects}}
+        {{if eq (len .Page.Vars.Projects) 0}}
         <span> Aucun projet n'a été généré pour le moment </span>
         {{end}}
     </main>

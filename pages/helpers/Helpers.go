@@ -58,6 +58,23 @@ func ParsePage(name string, tpl string, vars *map[string]interface{}, menu strin
 	return tmpWriter.String(), nil
 }
 
+func ParsePage2(page Page) (string, error) {
+	t, err := template.New(page.CurrentPage + ".html").Parse(page.Template)
+	if err != nil {
+		return "", err
+	}
+
+	(*page.Vars)["Page"] = page
+
+	tmpWriter := new(strings.Builder)
+	err = t.Execute(tmpWriter, &page.Vars)
+	if err != nil {
+		return "", err
+	}
+
+	return tmpWriter.String(), nil
+}
+
 func ParsePageWOVars(name string, tpl string, menu string) (string, error) {
 	return ParsePage(name, tpl, &map[string]interface{}{}, menu)
 }
@@ -117,4 +134,52 @@ func GetTechnoList(techno *technos.Techno) []PotentiallySelectedTechno {
 	}
 
 	return finalList
+}
+
+type Meta struct {
+	Charset   string
+	Name      string
+	Content   string
+	HttpEquiv string
+}
+
+type Title struct {
+	Tab  string
+	Page string
+}
+
+type CssFiles []string
+type MetaData []Meta
+type Vars *map[string]interface{}
+
+func VoidVars() *map[string]interface{} {
+	return &map[string]interface{}{}
+}
+
+type Page struct {
+	CurrentPage string
+	Template    string
+	Title
+	Menu template.HTML
+	CssFiles
+	MetaData MetaData
+	Vars     Vars
+}
+
+func ShowHtmlPage(page Page, menu string) (string, error) {
+	m, _ := ParseMenu(page.CurrentPage, menu)
+
+	(*page.Vars)["Menu"] = m
+
+	p := Page{
+		CurrentPage: page.CurrentPage,
+		Template:    page.Template,
+		Title:       page.Title,
+		CssFiles:    page.CssFiles,
+		MetaData:    page.MetaData,
+		Menu:        m,
+		Vars:        page.Vars,
+	}
+
+	return ParsePage2(p)
 }

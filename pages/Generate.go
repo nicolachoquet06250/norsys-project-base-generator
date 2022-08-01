@@ -44,15 +44,43 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	result, err := ParsePage("generate", generate, &map[string]interface{}{
-		"PageTitle":   "Génération du projet",
-		"CssFile":     "assets/generate.css",
-		"ProjectPath": projectPath,
-		"ProjectName": projectName,
-		"Technos":     GetTechnoList(&techno),
-		"IsGenerate":  true,
-		"Alert":       alert,
+	result, err := ShowHtmlPage(Page{
+		CurrentPage: "generate",
+		Template:    generate,
+		Title: Title{
+			Tab:  "Formulaire de génération d'environements de dev",
+			Page: "Génération du projet",
+		},
+		CssFiles: CssFiles{"assets/generate.css"},
+		MetaData: MetaData{
+			Meta{
+				Charset:   "UTF-8",
+				Name:      "",
+				Content:   "",
+				HttpEquiv: "",
+			},
+			Meta{
+				Charset:   "",
+				Name:      "viewport",
+				Content:   "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0",
+				HttpEquiv: "",
+			},
+			Meta{
+				Charset:   "",
+				Name:      "",
+				Content:   "ie=edge",
+				HttpEquiv: "X-UA-Compatible",
+			},
+		},
+		Vars: &map[string]interface{}{
+			"ProjectPath": projectPath,
+			"ProjectName": projectName,
+			"Technos":     GetTechnoList(&techno),
+			"IsGenerate":  true,
+			"Alert":       alert,
+		},
 	}, menu)
+
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -1,30 +1,41 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Formulaire de génération d'environements de dev</title>
+    {{range .Page.MetaData}}
+        <meta
+                {{if ne .Charset}}
+                    charset="{{.Charset}}"
+                {{end}}
 
-    <link rel="stylesheet" href="{{.CssFile}}">
+                {{if ne .Name}}
+                    name="{{.Name}}"
+                {{end}}
+
+                {{if ne .HttpEquiv}}
+                    http-equiv="{{.HttpEquiv}}"
+                {{end}}
+
+                {{if ne .Content}}
+                    content="{{.Content}}"
+                {{end}}
+        />
+    {{end}}
+    <title> {{ .Page.Title.Tab }} </title>
+
+    {{range .Page.CssFiles}}
+    <link rel="stylesheet" href="{{.}}">
+    {{end}}
 </head>
 <body>
-    {{ .Menu }}
+    {{ .Page.Menu }}
 
     <main class="d-flex justify-content-center align-items-center">
         <div class="card p-3 mt-2">
-                <h2 class="card-title">
-                    {{if .PageTitle}}
-                        {{.PageTitle}}
-                    {{else}}
-                        Norsys Project Base Generator
-                    {{end}}
-                </h2>
+                <h2 class="card-title"> {{ .Page.Title.Page }} </h2>
 
-                {{if .Alert}}
-                    <div class="alert alert-{{.Alert.Type}}" style="max-width: 600px" role="alert">
-                        {{.Alert.Message}}
+                {{if .Page.Vars.Alert}}
+                    <div class="alert alert-{{.Page.Vars.Alert.Type}}" style="max-width: 600px" role="alert">
+                        {{.Page.Vars.Alert.Message}}
                     </div>
                 {{end}}
 
@@ -37,8 +48,8 @@
                                 </label>
 
                                 <input type="text" id="path" name="path" class="form-control"
-                                       {{if .IsGenerate}}disabled{{end}}
-                                       {{if .ProjectPath}}value="{{.ProjectPath}}"{{end}}>
+                                       {{if .Page.Vars.IsGenerate}}disabled{{end}}
+                                       {{if .Page.Vars.ProjectPath}}value="{{.Page.Vars.ProjectPath}}"{{end}}>
                             </div>
                         </div>
 
@@ -49,8 +60,8 @@
                                 </label>
 
                                 <input type="text" id="project-name" name="projectName" class="form-control"
-                                       {{if .IsGenerate}}disabled{{end}}
-                                       {{if .ProjectName}}value="{{.ProjectName}}"{{end}}>
+                                       {{if .Page.Vars.IsGenerate}}disabled{{end}}
+                                       {{if .Page.Vars.ProjectName}}value="{{.Page.Vars.ProjectName}}"{{end}}>
                             </div>
                         </div>
 
@@ -59,8 +70,8 @@
                                 <label for="techno">Techno : </label>
 
                                 <select id="techno" name="techno" class="form-select"
-                                        {{if .IsGenerate}}disabled{{end}}>
-                                    {{ range .Technos }}
+                                        {{if .Page.Vars.IsGenerate}}disabled{{end}}>
+                                    {{ range .Page.Vars.Technos }}
                                     <option value="{{ .Value }}" {{if .Selected}}selected{{end}}> {{ .Name }} </option>
                                     {{ end }}
                                 </select>
@@ -69,7 +80,7 @@
 
                         <div class="row">
                             <div class="col-12 pt-2 d-flex justify-content-between align-items-center">
-                                {{if .IsGenerate}}
+                                {{if .Page.Vars.IsGenerate}}
                                     <a href="/" class="card-link">
                                         Retour à l'accueil
                                     </a>
