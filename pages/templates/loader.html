@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {{range .Page.MetaData}}
+        <meta
+                {{if not (eq .Charset "")}} charset="{{.Charset}}" {{end}}
+                {{if not (eq .Name "")}} name="{{.Name}}" {{end}}
+                {{if not (eq .HttpEquiv "")}} http-equiv="{{.HttpEquiv}}" {{end}}
+                {{if not (eq .Content "")}} content="{{.Content}}" {{end}}
+        />
+    {{end}}
+    {{if .Page.Title.Tab}}
+        <title> {{ .Page.Title.Tab }} </title>
+    {{end}}
+
+    {{range .Page.CssFiles}}
+        <link rel="stylesheet" href="{{.}}">
+    {{end}}
+</head>
+<body>
+    <p>Chargement...</p>
+</body>
+</html>

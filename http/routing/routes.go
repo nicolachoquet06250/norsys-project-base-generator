@@ -11,6 +11,8 @@ func Routes() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Home).
 		Methods(httpMethods.GET)
+	r.HandleFunc("/load", Loader).
+		Methods(httpMethods.GET)
 	r.HandleFunc("/generate", Generate).
 		Methods(httpMethods.GET)
 	r.HandleFunc("/help", Help).

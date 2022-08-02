@@ -14,6 +14,9 @@ var homeCss string
 //go:embed templates/assets/generate.css
 var generateCss string
 
+//go:embed templates/assets/loader.css
+var loaderCss string
+
 //go:embed templates/assets/help.css
 var helpCss string
 
@@ -31,6 +34,7 @@ var bootstrapProdCssMap string
 
 const (
 	HOME     = "home"
+	LOADER   = "loader"
 	GENERATE = "generate"
 	HELP     = "help"
 	VOID     = ""
@@ -52,6 +56,16 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 				homeCss = re.ReplaceAllString(homeCss, substitution)
 
 				return homeCss
+			case LOADER:
+				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
+				substitution := "{{ .$variable }}"
+				loaderCss = re.ReplaceAllString(loaderCss, substitution)
+
+				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
+				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
+				loaderCss = re.ReplaceAllString(loaderCss, substitution)
+
+				return loaderCss
 			case GENERATE:
 				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
 				substitution := "{{ .$variable }}"
