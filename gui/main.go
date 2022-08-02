@@ -7,6 +7,8 @@ import (
 	"github.com/asticode/go-astilectron"
 	"log"
 	"strconv"
+	"test_go_webserver/files"
+	"test_go_webserver/history"
 	"test_go_webserver/http/portChoice"
 	"test_go_webserver/server"
 )
@@ -15,12 +17,25 @@ import (
 var icon string
 
 var firstLoad = true
-var Loader *astilectron.Window
+
+func GenerateIcon() {
+	_icon := files.NewFile(history.GetIconPath())
+
+	exists, _ := _icon.Exists()
+	if !exists {
+		err := _icon.Create(icon, true)
+		if err != nil {
+			log.Fatal(fmt.Printf("can't create icon locally"))
+		}
+	}
+}
 
 func main() {
 	go server.Process(true, false)
 
 	l := log.New(log.Writer(), log.Prefix(), log.Flags())
+
+	GenerateIcon()
 
 	// Initialize astilectron
 	var a, err = astilectron.New(l, astilectron.Options{
@@ -55,7 +70,7 @@ func main() {
 		Height:         astikit.IntPtr(200),
 		Resizable:      astikit.BoolPtr(false),
 		Fullscreenable: astikit.BoolPtr(false),
-		Icon:           astikit.StrPtr(icon),
+		Icon:           astikit.StrPtr(history.GetIconPath()),
 		Transparent:    astikit.BoolPtr(true),
 	})
 	if err != nil {
@@ -72,7 +87,7 @@ func main() {
 		Center: astikit.BoolPtr(true),
 		Height: astikit.IntPtr(700),
 		Width:  astikit.IntPtr(700),
-		Icon:   astikit.StrPtr(icon),
+		Icon:   astikit.StrPtr(history.GetIconPath()),
 		Show:   astikit.BoolPtr(false),
 	})
 	if err != nil {

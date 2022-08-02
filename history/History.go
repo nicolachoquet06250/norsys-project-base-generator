@@ -24,13 +24,12 @@ type (
 
 var history = &History{}
 
-func GetHistoryFilePath() string {
+func GetProjectArchivesPath() string {
 	var (
 		username = func() string {
 			u, _ := user.Current()
 			return u.Username
 		}()
-		historyFileName = "npbg-history.json"
 		historyFilePath string
 	)
 
@@ -40,7 +39,15 @@ func GetHistoryFilePath() string {
 		historyFilePath = helpers.RootPath() + "home" + helpers.Slash() + username + helpers.Slash() + "npbg"
 	}
 
-	return historyFilePath + helpers.Slash() + historyFileName
+	return historyFilePath
+}
+
+func GetIconPath() string {
+	return GetProjectArchivesPath() + helpers.Slash() + "logo-norsys.png"
+}
+
+func GetHistoryFilePath() string {
+	return GetProjectArchivesPath() + helpers.Slash() + "npbg-history.json"
 }
 
 func (h History) Add(project ItemHistory) (alert helpers.Alert) {
@@ -144,22 +151,7 @@ func (h ItemHistory) UpdateProject(id int) error {
 }
 
 func GetHistoryList() *History {
-	var (
-		username = func() string {
-			u, _ := user.Current()
-			return u.Username
-		}()
-		historyFileName = "npbg-history.json"
-		historyFilePath string
-	)
-
-	if helpers.IsWindows() {
-		historyFilePath = helpers.RootPath() + "npbg"
-	} else {
-		historyFilePath = helpers.RootPath() + "home" + helpers.Slash() + username + helpers.Slash() + "npbg"
-	}
-
-	file := files.NewFile(historyFilePath + helpers.Slash() + historyFileName)
+	file := files.NewFile(GetHistoryFilePath())
 
 	historyFileContent, err := file.GetContent()
 
