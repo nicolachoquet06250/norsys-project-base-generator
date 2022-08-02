@@ -3,7 +3,7 @@ package pages
 import (
 	_ "embed"
 	"net/http"
-	. "test_go_webserver/pages/helpers"
+	. "npbg/pages/helpers"
 )
 
 //go:embed templates/assets/bootstrap/js/bootstrap.min.js

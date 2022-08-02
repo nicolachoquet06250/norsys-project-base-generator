@@ -6,11 +6,11 @@ import (
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	"log"
+	"npbg/files"
+	"npbg/history"
+	"npbg/http/portChoice"
+	"npbg/server"
 	"strconv"
-	"test_go_webserver/files"
-	"test_go_webserver/history"
-	"test_go_webserver/http/portChoice"
-	"test_go_webserver/server"
 )
 
 //go:embed logo-norsys.png
@@ -39,7 +39,7 @@ func main() {
 
 	// Initialize astilectron
 	var a, err = astilectron.New(l, astilectron.Options{
-		AppName:           "GUI test",
+		AppName:           "NPBG",
 		BaseDirectoryPath: "gui",
 	})
 
@@ -125,7 +125,7 @@ func main() {
 	})
 
 	w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
-		Loader.Destroy()
+		_ = Loader.Destroy()
 		return
 	})
 

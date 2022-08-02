@@ -3,9 +3,9 @@ package files
 import (
 	"fmt"
 	"io/ioutil"
+	. "npbg/helpers"
 	"os"
 	"strings"
-	. "test_go_webserver/helpers"
 )
 
 type (

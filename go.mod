@@ -1,4 +1,4 @@
-module test_go_webserver
+module npbg
 
 go 1.18
 

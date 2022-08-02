@@ -3,9 +3,9 @@ package files
 import (
 	"fmt"
 	"io/ioutil"
+	. "npbg/helpers"
 	"os"
 	"strings"
-	. "test_go_webserver/helpers"
 )
 
 type (
@@ -105,7 +105,9 @@ func (f File) Update(content string) error {
 	if err != nil {
 		return fmt.Errorf("failed opening file: %s", err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	_, err = file.WriteAt([]byte(content), 0) // Write at 0 beginning
 	if err != nil {

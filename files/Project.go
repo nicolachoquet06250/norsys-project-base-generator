@@ -2,11 +2,11 @@ package files
 
 import (
 	"fmt"
+	"npbg/configFiles"
+	. "npbg/helpers"
+	. "npbg/pages/helpers"
+	"npbg/technos"
 	"strings"
-	"test_go_webserver/configFiles"
-	. "test_go_webserver/helpers"
-	. "test_go_webserver/pages/helpers"
-	"test_go_webserver/technos"
 )
 
 type (

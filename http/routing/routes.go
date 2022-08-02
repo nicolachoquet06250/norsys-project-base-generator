@@ -3,8 +3,8 @@ package routing
 import (
 	"github.com/gorilla/mux"
 	"net/http"
-	"test_go_webserver/http/httpMethods"
-	. "test_go_webserver/pages"
+	"npbg/http/httpMethods"
+	. "npbg/pages"
 )
 
 func Routes() {

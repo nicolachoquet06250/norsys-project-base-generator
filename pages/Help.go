@@ -3,8 +3,8 @@ package pages
 import (
 	_ "embed"
 	"net/http"
-	"test_go_webserver/http/portChoice"
-	. "test_go_webserver/pages/helpers"
+	"npbg/http/portChoice"
+	. "npbg/pages/helpers"
 )
 
 //go:embed templates/help.html

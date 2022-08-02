@@ -2,9 +2,9 @@ package technos
 
 import (
 	"fmt"
-	"test_go_webserver/configFiles"
-	. "test_go_webserver/helpers"
-	"test_go_webserver/technos/enum"
+	"npbg/configFiles"
+	. "npbg/helpers"
+	"npbg/technos/enum"
 )
 
 func IsTechno(techno string) bool {

@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"log"
 	"net/http"
-	. "test_go_webserver/pages/helpers"
+	. "npbg/pages/helpers"
 )
 
 //go:embed templates/index.html

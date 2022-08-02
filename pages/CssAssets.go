@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"github.com/gorilla/mux"
 	"net/http"
+	. "npbg/pages/helpers"
 	"regexp"
-	. "test_go_webserver/pages/helpers"
 )
 
 //go:embed templates/assets/home.css

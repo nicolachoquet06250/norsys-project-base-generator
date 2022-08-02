@@ -4,9 +4,9 @@ import (
 	_ "embed"
 	"encoding/json"
 	"net/http"
-	"test_go_webserver/files"
-	"test_go_webserver/history"
-	. "test_go_webserver/pages/helpers"
+	"npbg/files"
+	"npbg/history"
+	. "npbg/pages/helpers"
 )
 
 //go:embed templates/generated_projects.html

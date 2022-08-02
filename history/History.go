@@ -3,11 +3,11 @@ package history
 import (
 	"encoding/json"
 	"fmt"
+	"npbg/files"
+	"npbg/helpers"
+	"npbg/technos"
 	"os/user"
 	"strings"
-	"test_go_webserver/files"
-	"test_go_webserver/helpers"
-	"test_go_webserver/technos"
 )
 
 type (

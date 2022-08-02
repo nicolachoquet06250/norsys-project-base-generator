@@ -1,11 +1,11 @@
 package portChoice
 
 import (
+	"npbg/cli"
+	. "npbg/helpers"
 	"regexp"
 	"strconv"
 	"strings"
-	"test_go_webserver/cli"
-	. "test_go_webserver/helpers"
 )
 
 var ChosenPort int

@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"npbg/files"
+	. "npbg/helpers"
+	"npbg/history"
+	"npbg/technos"
 	"os"
-	"test_go_webserver/files"
-	. "test_go_webserver/helpers"
-	"test_go_webserver/history"
-	"test_go_webserver/technos"
 )
 
 func Process() (exit bool) {

@@ -1,11 +1,11 @@
 package main
 
 import (
+	"npbg/cli"
+	"npbg/helpers"
+	"npbg/server"
 	"os"
 	"strings"
-	"test_go_webserver/cli"
-	"test_go_webserver/helpers"
-	"test_go_webserver/server"
 )
 
 func main() {

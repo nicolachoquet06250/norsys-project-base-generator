@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"npbg/helpers"
+	"npbg/technos"
 	"strings"
-	"test_go_webserver/helpers"
-	"test_go_webserver/technos"
 )
 
 func ParseString(name string, str string, vars *map[string]interface{}) (r string, e error) {

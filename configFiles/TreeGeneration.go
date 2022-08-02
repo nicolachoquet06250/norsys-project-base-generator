@@ -1,8 +1,8 @@
 package configFiles
 
 import (
-	. "test_go_webserver/helpers"
-	technosEnum "test_go_webserver/technos/enum"
+	. "npbg/helpers"
+	technosEnum "npbg/technos/enum"
 )
 
 type treeElement = map[string]string

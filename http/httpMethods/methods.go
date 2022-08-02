@@ -3,7 +3,7 @@ package httpMethods
 import (
 	"fmt"
 	"net/http"
-	"test_go_webserver/http/httpStatus"
+	"npbg/http/httpStatus"
 )
 
 const (

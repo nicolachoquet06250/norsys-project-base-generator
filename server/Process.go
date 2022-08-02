@@ -3,11 +3,11 @@ package server
 import (
 	"log"
 	"net/http"
+	"npbg/cli"
+	"npbg/http/portChoice"
+	"npbg/http/routing"
 	"strconv"
 	"strings"
-	"test_go_webserver/cli"
-	"test_go_webserver/http/portChoice"
-	"test_go_webserver/http/routing"
 )
 
 func Process(registerRoutes bool, openBrowser bool) {
