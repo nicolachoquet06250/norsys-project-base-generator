@@ -34,3 +34,9 @@ Application CLI / GUI / Web permétant de générérer un template de projet
 // génère un serveur web sur un port disponible et lance la home page sur votre navigateur par default
 .\norsys-project-base-generator-gui-windows-amd64.exe
 ```
+
+## Sitographie
+* https://pkg.go.dev/github.com/asticode/go-astilectron
+* https://curatedgo.com/r/thanks-to-go-astilectron-asticodego-astilectron/index.html
+* https://medium.com/@asticode/how-to-add-a-gui-to-your-golang-app-in-5-easy-steps-c25c99d4d8e0
+* https://www.bgs-associes.com/configurer-une-application-avec-apache-php-mysql/
