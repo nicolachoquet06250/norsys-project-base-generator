@@ -2,15 +2,19 @@ package main
 
 import (
 	_ "embed"
+	"encoding/base64"
+	jsonPkg "encoding/json"
 	"fmt"
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	"log"
-	"npbg/files"
+	"npbg/helpers"
 	"npbg/history"
 	"npbg/http/portChoice"
 	"npbg/server"
+	"os"
 	"strconv"
+	"strings"
 )
 
 //go:embed logo-norsys.png
@@ -18,85 +22,45 @@ var icon string
 
 var firstLoad = true
 
-func GenerateIcon() {
-	_icon := files.NewFile(history.GetIconPath())
-
-	exists, _ := _icon.Exists()
-	if !exists {
-		err := _icon.Create(icon, true)
-		if err != nil {
-			log.Fatal(fmt.Printf("can't create icon locally"))
-		}
-	}
-}
-
 func main() {
+	var openDevTools = os.Getenv("OPEN_DEVTOOLS") == "1" || os.Getenv("OPEN_DEVTOOLS") == "" ||
+		!strings.Contains(os.Args[0], helpers.Slash()+"b001"+helpers.Slash()+"exe"+helpers.Slash())
+
 	go server.Process(true, false)
 
 	l := log.New(log.Writer(), log.Prefix(), log.Flags())
 
 	GenerateIcon()
 
-	// Initialize astilectron
-	var a, err = astilectron.New(l, astilectron.Options{
-		AppName:           "NPBG",
-		BaseDirectoryPath: "gui",
-	})
-
-	if err != nil {
-		l.Fatal(fmt.Errorf("main: creating astilectron failed: %w", err))
-	}
+	a := CreateApp(l, "NPBG")
 	defer a.Close()
 
-	// Add a listener on Astilectron
-	a.On(astilectron.EventNameAppCrash, func(e astilectron.Event) (deleteListener bool) {
-		println("App has crashed")
-		return
-	})
+	Loader := CreateLoader(a, l)
 
-	// Handle signals
-	a.HandleSignals()
+	urlBase := "http://127.0.0.1:" + strconv.FormatInt(int64(portChoice.ChosenPort), 10)
 
-	// Start
-	err = a.Start()
+	w := CreateWindow(
+		a, l,
+		urlBase,
+		&astilectron.WindowOptions{
+			Center: astikit.BoolPtr(true),
+			Height: astikit.IntPtr(700),
+			Width:  astikit.IntPtr(700),
+			Icon:   astikit.StrPtr(history.GetIconPath()),
+			Show:   astikit.BoolPtr(false),
+		},
+	)
+
+	err := w.OpenDevTools()
 	if err != nil {
-		l.Fatal(fmt.Errorf("main: starting astilectron failed: %w", err))
+		println(err.Error())
 	}
 
-	Loader, err := a.NewWindow("http://127.0.0.1:"+strconv.FormatInt(int64(portChoice.ChosenPort), 10)+"/load", &astilectron.WindowOptions{
-		Frame:          astikit.BoolPtr(false),
-		Center:         astikit.BoolPtr(true),
-		Width:          astikit.IntPtr(200),
-		Height:         astikit.IntPtr(200),
-		Resizable:      astikit.BoolPtr(false),
-		Fullscreenable: astikit.BoolPtr(false),
-		Icon:           astikit.StrPtr(history.GetIconPath()),
-		Transparent:    astikit.BoolPtr(true),
-	})
-	if err != nil {
-		l.Fatal(fmt.Errorf("main: new window failed: %w", err))
-	}
-
-	err = Loader.Create()
-	if err != nil {
-		l.Fatal(fmt.Errorf("main: creating window failed: %w", err))
-	}
-
-	// Create a new window
-	w, err := a.NewWindow("http://127.0.0.1:"+strconv.FormatInt(int64(portChoice.ChosenPort), 10), &astilectron.WindowOptions{
-		Center: astikit.BoolPtr(true),
-		Height: astikit.IntPtr(700),
-		Width:  astikit.IntPtr(700),
-		Icon:   astikit.StrPtr(history.GetIconPath()),
-		Show:   astikit.BoolPtr(false),
-	})
-	if err != nil {
-		l.Fatal(fmt.Errorf("main: new window failed: %w", err))
-	}
-
-	err = w.Create()
-	if err != nil {
-		l.Fatal(fmt.Errorf("main: creating window failed: %w", err))
+	if !openDevTools {
+		err = w.CloseDevTools()
+		if err != nil {
+			println(err.Error())
+		}
 	}
 
 	w.On(astilectron.EventNameWindowEventReadyToShow, func(e astilectron.Event) (deleteListener bool) {
@@ -108,7 +72,7 @@ func main() {
 			}
 		}
 
-		err = w.Show()
+		err := w.Show()
 		println("show main window")
 		if err != nil {
 			l.Fatal(fmt.Errorf("main window can't be showed"))
@@ -118,7 +82,6 @@ func main() {
 		return
 	})
 
-	// Add a listener on the window
 	w.On(astilectron.EventNameWindowEventResize, func(e astilectron.Event) (deleteListener bool) {
 		println("Window resized")
 		return
@@ -126,6 +89,52 @@ func main() {
 
 	w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
 		_ = Loader.Destroy()
+		return
+	})
+
+	w.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
+		json, err := m.MarshalJSON()
+		if err != nil {
+			log.Fatal(fmt.Printf("error : %s", err.Error()))
+		}
+
+		json, err = base64.StdEncoding.DecodeString(strings.Replace(string(json), "\"", "", 2))
+		if err != nil {
+			log.Fatal(fmt.Printf("error : %s", err.Error()))
+		}
+		strJson := strings.Replace(string(json), "\"{", "{", 1)
+		strJson = strings.Replace(strJson, "}\"", "}", 1)
+		strJson = strings.Replace(strJson, "\\\"", "\"", -1)
+
+		println("message received decoded : " + strJson)
+
+		var jsonMessage JsonMessage
+		err = jsonPkg.Unmarshal([]byte(strJson), &jsonMessage)
+		if err != nil {
+			log.Fatal(fmt.Printf("error : %s", err.Error()))
+		}
+
+		if jsonMessage.Channel == "Notification" {
+			notification := CreateNotification(a, NotificationOption{
+				Title:    "Test notif",
+				Subtitle: astikit.StrPtr("Test notif"),
+				Body:     fmt.Sprintf("Bonjour\n%s", jsonMessage.Data["name"]),
+			})
+
+			_ = notification.Show()
+
+			notification.On(astilectron.EventNameNotificationEventClicked, func(e astilectron.Event) (deleteListener bool) {
+				err = w.SendMessage(JsonMessage{
+					Channel: "Redirect",
+					Data:    map[string]string{"uri": "/help"},
+				})
+				if err != nil {
+					log.Fatal(fmt.Printf("error : %s", err.Error()))
+				}
+				return
+			})
+		}
+
 		return
 	})
 

@@ -15,8 +15,7 @@ func main() {
 		return
 	}
 
-	var openBrowser = os.Getenv("OPEN_BROWSER") == "1" ||
-		os.Getenv("OPEN_BROWSER") == "" ||
+	var openBrowser = os.Getenv("OPEN_BROWSER") == "1" || os.Getenv("OPEN_BROWSER") == "" ||
 		!strings.Contains(os.Args[0], helpers.Slash()+"b001"+helpers.Slash()+"exe"+helpers.Slash())
 
 	server.Process(true, openBrowser)

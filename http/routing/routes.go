@@ -23,6 +23,8 @@ func Routes() {
 		Methods(httpMethods.DELETE)
 	r.HandleFunc("/assets/{file:[a-z_-]+}.css", CssAssets).
 		Methods(httpMethods.GET)
+	r.HandleFunc("/assets/{file:[a-z_-]+}.js", JsAssets).
+		Methods(httpMethods.GET)
 	r.HandleFunc("/bootstrap/b.css", BootstrapCssAssets).
 		Methods(httpMethods.GET)
 	r.HandleFunc("/bootstrap/bootstrap.min.css.map", BootstrapCssMapAssets).

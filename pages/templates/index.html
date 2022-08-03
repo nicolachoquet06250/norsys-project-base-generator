@@ -14,6 +14,34 @@
     {{range .Page.CssFiles}}
     <link rel="stylesheet" href="{{.}}">
     {{end}}
+
+    <script src="assets/init_astilectron.js"></script>
+
+    <script>
+        // This will wait for the astilectron namespace to be ready
+        document.addEventListener('astilectron-ready', () => {
+            sendMessage({
+                channel: "Notification",
+                data: {
+                    name: "Nicolas"
+                }
+            })
+
+            /**
+             * @param {string} message.channel
+             * @param {Record<string, string>|Record<string, string>[]} message.data
+             * @returns {string}
+             */
+            const newMessageHandler = message => {
+                if (message.channel === "Redirect") {
+                    window.location.href = message.data.uri;
+                }
+
+                return message.data.uri;
+            };
+            astilectron.onMessage(newMessageHandler);
+        })
+    </script>
 </head>
 <body>
     {{ .Page.Menu }}

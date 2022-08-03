@@ -32,6 +32,9 @@ var bootstrapHorsProdCssMap string
 //go:embed templates/assets/bootstrap/css/bootstrap.min.css.map
 var bootstrapProdCssMap string
 
+//go:embed templates/assets/init_astilectron.js
+var initAstilectronJs string
+
 const (
 	HOME     = "home"
 	LOADER   = "loader"
