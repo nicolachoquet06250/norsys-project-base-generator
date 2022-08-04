@@ -79,7 +79,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 			"IsGenerate":  true,
 			"Alert":       alert,
 		},
-	}, menu)
+	}, Menu)
 
 	if err != nil {
 		log.Fatal(err.Error())

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {{range .Page.MetaData}}
+        <meta
+                {{if not (eq .Charset "")}} charset="{{.Charset}}" {{end}}
+                {{if not (eq .Name "")}} name="{{.Name}}" {{end}}
+                {{if not (eq .HttpEquiv "")}} http-equiv="{{.HttpEquiv}}" {{end}}
+                {{if not (eq .Content "")}} content="{{.Content}}" {{end}}
+        />
+    {{end}}
+    <title> {{ .Page.Title.Tab }} </title>
+
+    {{range .Page.CssFiles}}
+        <link rel="stylesheet" href="{{.}}">
+    {{end}}
+
+    <script src="assets/init_astilectron.js"></script>
+
+    <script>
+        document.addEventListener('astilectron-ready', () => {
+            sendMessage({
+                channel: `ChooseFolder`,
+                data: {
+                    path: 'C:\\Users\\NDZQ5522\\Desktop'
+                }
+            })
+        });
+    </script>
+</head>
+<body>
+    <h1>Je sélectionne un répertoire</h1>
+</body>
+</html>

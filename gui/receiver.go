@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func receiveNotificationChannel(a *astilectron.Astilectron, w *astilectron.Window, message *JsonMessage) {
+func receiveNotificationChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
 	body := fmt.Sprintf("Bonjour\n%s", message.Data["name"])
 	if message.Data["body"] != "" {
 		body = message.Data["body"]
@@ -18,22 +18,35 @@ func receiveNotificationChannel(a *astilectron.Astilectron, w *astilectron.Windo
 		title = message.Data["title"]
 	}
 
-	notification := CreateNotification(a, NotificationOption{
+	n := CreateNotification(a, l, NotificationOption{
 		Title:    title,
 		Subtitle: astikit.StrPtr(title),
 		Body:     body,
 	})
 
-	_ = notification.Show()
+	_ = n.Show()
+}
 
-	notification.On(astilectron.EventNameNotificationEventClicked, func(e astilectron.Event) (deleteListener bool) {
-		err := w.SendMessage(JsonMessage{
-			Channel: "Redirect",
-			Data:    map[string]string{"uri": "/help"},
-		})
-		if err != nil {
-			log.Fatal(fmt.Printf("error : %s", err.Error()))
-		}
-		return
+func receiveChooseFolderChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
+	folderPath := message.Data["path"]
+
+	//println("path : " + folderPath)
+
+	n := CreateNotification(a, l, NotificationOption{
+		Title:    "Répertoire choisis",
+		Subtitle: astikit.StrPtr("Répertoire choisis"),
+		Body:     folderPath,
 	})
+
+	_ = n.Show()
+
+	if w != nil {
+		_ = w.Destroy()
+
+		_ = main.SendMessage(
+			NewMessage(PutFolder, map[string]string{
+				"folder": folderPath,
+			}),
+		)
+	}
 }

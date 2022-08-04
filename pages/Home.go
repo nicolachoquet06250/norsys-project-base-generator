@@ -11,10 +11,13 @@ import (
 var home string
 
 //go:embed templates/menu.html
-var menu string
+var Menu string
 
 //go:embed templates/loader.html
 var load string
+
+//go:embed templates/folder_selector.html
+var FolderSelector string
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	result, err := ShowHtmlPage(Page{
@@ -52,7 +55,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			"IsGenerate":  false,
 			"Alert":       nil,
 		},
-	}, menu)
+	}, Menu)
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -91,7 +94,7 @@ func Loader(w http.ResponseWriter, r *http.Request) {
 			Page: "Chargement...",
 		},
 		Vars: &map[string]interface{}{},
-	}, menu)
+	}, Menu)
 
 	Text(&w, result)
 }

@@ -47,7 +47,7 @@ func MyGeneratedProjects(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 		Vars: &map[string]interface{}{"Projects": h},
-	}, menu)
+	}, Menu)
 
 	Text(&w, result)
 }

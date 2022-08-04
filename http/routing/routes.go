@@ -5,21 +5,37 @@ import (
 	"net/http"
 	"npbg/http/httpMethods"
 	. "npbg/pages"
+	"npbg/pages/widgets"
 )
+
+type Route string
+
+const (
+	HomePage           Route = "/"
+	LoaderPage         Route = "/load"
+	GeneratePage       Route = "/generate"
+	HelpPage           Route = "/help"
+	GeneratedPage      Route = "/generated"
+	FolderSelectorPage Route = "/folderSelector"
+)
+
+func RouteToString(route Route) string {
+	return string(route)
+}
 
 func Routes() {
 	r := mux.NewRouter()
-	r.HandleFunc("/", Home).
+	r.HandleFunc(RouteToString(HomePage), Home).
 		Methods(httpMethods.GET)
-	r.HandleFunc("/load", Loader).
+	r.HandleFunc(RouteToString(LoaderPage), Loader).
 		Methods(httpMethods.GET)
-	r.HandleFunc("/generate", Generate).
+	r.HandleFunc(RouteToString(GeneratePage), Generate).
 		Methods(httpMethods.GET)
-	r.HandleFunc("/help", Help).
+	r.HandleFunc(RouteToString(HelpPage), Help).
 		Methods(httpMethods.GET)
-	r.HandleFunc("/generated", MyGeneratedProjects).
+	r.HandleFunc(RouteToString(GeneratedPage), MyGeneratedProjects).
 		Methods(httpMethods.GET)
-	r.HandleFunc("/generated", RemoveHistoryProject).
+	r.HandleFunc(RouteToString(GeneratedPage), RemoveHistoryProject).
 		Methods(httpMethods.DELETE)
 	r.HandleFunc("/assets/{file:[a-z_-]+}.css", CssAssets).
 		Methods(httpMethods.GET)
@@ -30,6 +46,10 @@ func Routes() {
 	r.HandleFunc("/bootstrap/bootstrap.min.css.map", BootstrapCssMapAssets).
 		Methods(httpMethods.GET)
 	r.HandleFunc("/bootstrap/b.js", BootstrapJsAssets).
+		Methods(httpMethods.GET)
+
+	// WIDGETS
+	r.HandleFunc(RouteToString(FolderSelectorPage), widgets.FolderSelector).
 		Methods(httpMethods.GET)
 
 	http.Handle("/", r)

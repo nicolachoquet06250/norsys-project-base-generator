@@ -8,8 +8,31 @@ import (
 	"npbg/files"
 	"npbg/history"
 	"npbg/http/portChoice"
+	"npbg/http/routing"
 	"strconv"
 )
+
+func toAstilectronNotificationOptions(o *NotificationOption) (options *astilectron.NotificationOptions) {
+	options = &astilectron.NotificationOptions{
+		Title:            o.Title,
+		Icon:             history.GetIconPath(),
+		Body:             o.Body,
+		ReplyPlaceholder: "type your reply here", // Only MacOSX
+		HasReply:         astikit.BoolPtr(true),  // Only MacOSX
+	}
+	if o.Subtitle != nil {
+		options = &astilectron.NotificationOptions{
+			Title:            o.Title,
+			Subtitle:         *o.Subtitle,
+			Icon:             history.GetIconPath(),
+			Body:             o.Body,
+			ReplyPlaceholder: "type your reply here", // Only MacOSX
+			HasReply:         astikit.BoolPtr(true),  // Only MacOSX
+		}
+	}
+
+	return options
+}
 
 func GenerateIcon() {
 	_icon := files.NewFile(history.GetIconPath())
@@ -36,7 +59,7 @@ func CreateApp(l *log.Logger, name string) *astilectron.Astilectron {
 
 	// Add a listener on Astilectron
 	a.On(astilectron.EventNameAppCrash, func(e astilectron.Event) (deleteListener bool) {
-		println("App has crashed")
+		l.Println("App has crashed")
 		return
 	})
 
@@ -74,7 +97,7 @@ func CreateLoader(a *astilectron.Astilectron, l *log.Logger) *astilectron.Window
 	baseUrl := "http://127.0.0.1:" + strconv.FormatInt(int64(portChoice.ChosenPort), 10)
 	return CreateWindow(
 		a, l,
-		baseUrl+"/load",
+		baseUrl+routing.RouteToString(routing.LoaderPage),
 		&astilectron.WindowOptions{
 			Frame:          astikit.BoolPtr(false),
 			Center:         astikit.BoolPtr(true),
@@ -89,40 +112,16 @@ func CreateLoader(a *astilectron.Astilectron, l *log.Logger) *astilectron.Window
 	)
 }
 
-func CreateNotification(a *astilectron.Astilectron, options NotificationOption) *astilectron.Notification {
-	o := &astilectron.NotificationOptions{
-		Title:            options.Title,
-		Icon:             history.GetIconPath(),
-		Body:             options.Body,
-		ReplyPlaceholder: "type your reply here", // Only MacOSX
-		HasReply:         astikit.BoolPtr(true),  // Only MacOSX
+func CreateNotification(a *astilectron.Astilectron, l *log.Logger, o NotificationOption) *astilectron.Notification {
+	n := a.NewNotification(
+		toAstilectronNotificationOptions(&o),
+	)
+
+	err := n.Create()
+
+	if err != nil {
+		l.Fatal(fmt.Errorf("erreur: new notification failed: %w", err))
 	}
-	if options.Subtitle != nil {
-		o = &astilectron.NotificationOptions{
-			Title:            options.Title,
-			Subtitle:         *options.Subtitle,
-			Icon:             history.GetIconPath(),
-			Body:             options.Body,
-			ReplyPlaceholder: "type your reply here", // Only MacOSX
-			HasReply:         astikit.BoolPtr(true),  // Only MacOSX
-		}
-	}
-
-	n := a.NewNotification(o)
-
-	// Add listeners
-	n.On(astilectron.EventNameNotificationEventClicked, func(e astilectron.Event) (deleteListener bool) {
-		log.Println("the notification has been clicked!")
-		return
-	})
-	// Only for MacOSX
-	n.On(astilectron.EventNameNotificationEventReplied, func(e astilectron.Event) (deleteListener bool) {
-		log.Printf("the user has replied to the notification: %s\n", e.Reply)
-		return
-	})
-
-	// Create notification
-	_ = n.Create()
 
 	return n
 }

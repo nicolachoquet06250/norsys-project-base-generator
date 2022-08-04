@@ -40,6 +40,6 @@ func Help(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 		Vars: &map[string]interface{}{"Port": portChoice.ChosenPort},
-	}, menu)
+	}, Menu)
 	Text(&w, result)
 }

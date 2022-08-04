@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
+	"io"
 	"log"
+	"npbg/gui/writer"
 	"npbg/helpers"
 	"npbg/history"
 	"npbg/http/portChoice"
+	"npbg/http/routing"
 	"npbg/server"
 	"os"
 	"strconv"
@@ -21,24 +24,33 @@ var icon string
 var firstLoad = true
 
 func main() {
-	var openDevTools = os.Getenv("OPEN_DEVTOOLS") == "1" || os.Getenv("OPEN_DEVTOOLS") == "" ||
+	var isDevEnv = os.Getenv("OPEN_DEVTOOLS") == "1" ||
 		!strings.Contains(os.Args[0], helpers.Slash()+"b001"+helpers.Slash()+"exe"+helpers.Slash())
 
 	go server.Process(true, false)
 
-	l := log.New(log.Writer(), log.Prefix(), log.Flags())
+	var _writer = (func() io.Writer {
+		if isDevEnv {
+			return writer.NewLogWriter().Enable().Writer
+		}
+		return writer.NewLogWriter().Disable().Writer
+	})()
+
+	logger := log.New(_writer, log.Prefix(), log.Flags())
 
 	GenerateIcon()
 
-	a := CreateApp(l, "NPBG")
-	defer a.Close()
+	app := CreateApp(logger, "NPBG")
+	defer app.Close()
 
-	Loader := CreateLoader(a, l)
+	loader := CreateLoader(app, logger)
 
-	urlBase := "http://127.0.0.1:" + strconv.FormatInt(int64(portChoice.ChosenPort), 10)
+	port := strconv.FormatInt(int64(portChoice.ChosenPort), 10)
 
-	w := CreateWindow(
-		a, l,
+	urlBase := "http://127.0.0.1:" + port
+
+	window := CreateWindow(
+		app, logger,
 		urlBase,
 		&astilectron.WindowOptions{
 			Center: astikit.BoolPtr(true),
@@ -49,54 +61,173 @@ func main() {
 		},
 	)
 
-	if openDevTools {
-		err := w.OpenDevTools()
+	var menu = app.NewMenu([]*astilectron.MenuItemOptions{
+		{
+			Label: astikit.StrPtr("Separator"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{Label: astikit.StrPtr("Normal 1")},
+				{Label: astikit.StrPtr("Normal 2")},
+				{Type: astilectron.MenuItemTypeSeparator},
+				{Label: astikit.StrPtr("Normal 3")},
+			},
+		},
+		{
+			Label: astikit.StrPtr("Checkbox"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{Checked: astikit.BoolPtr(true), Label: astikit.StrPtr("Checkbox 1"), Type: astilectron.MenuItemTypeCheckbox},
+				{Label: astikit.StrPtr("Checkbox 2"), Type: astilectron.MenuItemTypeCheckbox},
+				{Label: astikit.StrPtr("Checkbox 3"), Type: astilectron.MenuItemTypeCheckbox},
+			},
+		},
+		{
+			Label: astikit.StrPtr("Radio"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{Checked: astikit.BoolPtr(true), Label: astikit.StrPtr("Radio 1"), Type: astilectron.MenuItemTypeRadio},
+				{Label: astikit.StrPtr("Radio 2"), Type: astilectron.MenuItemTypeRadio},
+				{Label: astikit.StrPtr("Radio 3"), Type: astilectron.MenuItemTypeRadio},
+			},
+		},
+		{
+			Label: astikit.StrPtr("Aide"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{
+					Label: astikit.StrPtr("Aide"),
+					Role:  astilectron.MenuItemRoleHelp,
+					OnClick: func(e astilectron.Event) (deleteListener bool) {
+						var err = window.SendMessage(
+							NewMessage(Redirect, map[string]string{"uri": routing.RouteToString(routing.HelpPage)}),
+						)
+						if err != nil {
+							log.Fatal(fmt.Printf("error : %s", err.Error()))
+						}
+						return
+					},
+				},
+				{
+					Label: astikit.StrPtr("Close"),
+					Role:  astilectron.MenuItemRoleClose,
+				},
+			},
+		},
+	})
+
+	// Retrieve a menu item
+	// This will retrieve the "Checkbox 1" item
+	menuItem, _ := menu.Item(1, 0)
+
+	// Add listener
+	menuItem.On(astilectron.EventNameMenuItemEventClicked, func(e astilectron.Event) bool {
+		logger.Printf("Menu item has been clicked. 'Checked' status is now %t", *e.MenuItemOptions.Checked)
+		return false
+	})
+
+	// Create the menu
+	_ = menu.Create()
+
+	// Manipulate a menu item
+	_ = menuItem.SetChecked(true)
+
+	// Init a new menu item
+	var newItem = menu.NewItem(&astilectron.MenuItemOptions{
+		Label: astikit.StrPtr("Inserted"),
+		SubMenu: []*astilectron.MenuItemOptions{
+			{Label: astikit.StrPtr("Inserted 1")},
+			{Label: astikit.StrPtr("Inserted 2")},
+		},
+	})
+
+	// Insert the menu item at position "1"
+	_ = menu.Insert(1, newItem)
+
+	// Fetch a sub menu
+	subMenu, _ := menu.SubMenu(0)
+
+	var Modal *astilectron.Window
+
+	// Init a new menu item
+	newItem = subMenu.NewItem(&astilectron.MenuItemOptions{
+		Label: astikit.StrPtr("Appended"),
+		SubMenu: []*astilectron.MenuItemOptions{
+			{Label: astikit.StrPtr("Appended 1")},
+			{Label: astikit.StrPtr("Appended 2"), OnClick: func(e astilectron.Event) (deleteListener bool) {
+				Modal = CreateWindow(app, logger, urlBase+routing.RouteToString(routing.FolderSelectorPage), &astilectron.WindowOptions{
+					Center: astikit.BoolPtr(true),
+					Height: astikit.IntPtr(700),
+					Width:  astikit.IntPtr(700),
+					Icon:   astikit.StrPtr(history.GetIconPath()),
+					Show:   astikit.BoolPtr(false),
+					Modal:  astikit.BoolPtr(true),
+				})
+
+				err := Modal.OpenDevTools()
+				if err != nil {
+					logger.Fatal(fmt.Errorf("erreur : %s", err.Error()))
+				}
+
+				_ = Modal.Show()
+
+				Modal.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
+					var jsonMessage JsonMessage = decodeJsonMessage(
+						decodeMessage(m),
+					)
+
+					if jsonMessage.Channel == string(ChooseFolder) {
+						receiveChooseFolderChannel(app, Modal, logger, &jsonMessage, window)
+					}
+
+					return
+				})
+				return
+			}},
+		},
+	})
+
+	// Append menu item dynamically
+	_ = subMenu.Append(newItem)
+
+	if isDevEnv {
+		err := window.OpenDevTools()
 		if err != nil {
-			println(err.Error())
+			logger.Println(err.Error())
 		}
 	}
 
-	w.On(astilectron.EventNameWindowEventReadyToShow, func(e astilectron.Event) (deleteListener bool) {
-		if firstLoad == true && Loader != nil {
-			err := Loader.Hide()
-			println("destroy loader window")
+	window.On(astilectron.EventNameWindowEventReadyToShow, func(e astilectron.Event) (deleteListener bool) {
+		if firstLoad == true && loader != nil {
+			err := loader.Hide()
+			logger.Println("destroy loader window")
 			if err != nil {
-				l.Fatal(fmt.Errorf("loader window can't be destroy"))
+				logger.Fatal(fmt.Errorf("loader window can't be destroy"))
 			}
 		}
 
-		err := w.Show()
-		println("show main window")
+		err := window.Show()
+		logger.Println("show main window")
 		if err != nil {
-			l.Fatal(fmt.Errorf("main window can't be showed"))
+			logger.Fatal(fmt.Errorf("main window can't be showed"))
 		}
 
 		firstLoad = false
 		return
 	})
 
-	w.On(astilectron.EventNameWindowEventResize, func(e astilectron.Event) (deleteListener bool) {
-		println("Window resized")
+	window.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
+		_ = loader.Destroy()
 		return
 	})
 
-	w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
-		_ = Loader.Destroy()
-		return
-	})
-
-	w.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
+	window.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
 		var jsonMessage JsonMessage = decodeJsonMessage(
 			decodeMessage(m),
 		)
 
-		if jsonMessage.Channel == "Notification" {
-			receiveNotificationChannel(a, w, &jsonMessage)
+		if jsonMessage.Channel == string(Notification) {
+			receiveNotificationChannel(app, window, logger, &jsonMessage, nil)
 		}
 
 		return
 	})
 
 	// Blocking pattern
-	a.Wait()
+	app.Wait()
 }

@@ -27,9 +27,15 @@
             const newMessageHandler = message => {
                 if (message.channel === "Redirect") {
                     window.location.href = message.data.uri;
-                }
 
-                return message.data.uri;
+                    return message.data.uri;
+                } else if (message.channel === "PutFolder") {
+                    const folder = message.data.folder;
+
+                    document.querySelector('#path').value = folder
+
+                    return folder;
+                }
             };
             astilectron.onMessage(newMessageHandler);
 
