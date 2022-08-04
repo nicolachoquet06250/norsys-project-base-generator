@@ -18,15 +18,7 @@
     <script src="assets/init_astilectron.js"></script>
 
     <script>
-        // This will wait for the astilectron namespace to be ready
         document.addEventListener('astilectron-ready', () => {
-            sendMessage({
-                channel: "Notification",
-                data: {
-                    name: "Nicolas"
-                }
-            })
-
             /**
              * @param {string} message.channel
              * @param {Record<string, string>|Record<string, string>[]} message.data
@@ -40,6 +32,19 @@
                 return message.data.uri;
             };
             astilectron.onMessage(newMessageHandler);
+
+            {{if .Page.Vars.Alert}}
+            const type = '{{.Page.Vars.Alert.Type}}'
+            const title = type === 'danger' ? 'Erreur :' : 'Succès :';
+
+            sendMessage({
+                channel: "Notification",
+                data: {
+                    title,
+                    body: `{{.Page.Vars.Alert.Message}}`.substring(1, `{{.Page.Vars.Alert.Message}}`.length - 2)
+                }
+            })
+            {{end}}
         })
     </script>
 </head>

@@ -2,8 +2,6 @@ package main
 
 import (
 	_ "embed"
-	"encoding/base64"
-	jsonPkg "encoding/json"
 	"fmt"
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
@@ -51,13 +49,8 @@ func main() {
 		},
 	)
 
-	err := w.OpenDevTools()
-	if err != nil {
-		println(err.Error())
-	}
-
-	if !openDevTools {
-		err = w.CloseDevTools()
+	if openDevTools {
+		err := w.OpenDevTools()
 		if err != nil {
 			println(err.Error())
 		}
@@ -93,46 +86,12 @@ func main() {
 	})
 
 	w.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
-		json, err := m.MarshalJSON()
-		if err != nil {
-			log.Fatal(fmt.Printf("error : %s", err.Error()))
-		}
-
-		json, err = base64.StdEncoding.DecodeString(strings.Replace(string(json), "\"", "", 2))
-		if err != nil {
-			log.Fatal(fmt.Printf("error : %s", err.Error()))
-		}
-		strJson := strings.Replace(string(json), "\"{", "{", 1)
-		strJson = strings.Replace(strJson, "}\"", "}", 1)
-		strJson = strings.Replace(strJson, "\\\"", "\"", -1)
-
-		println("message received decoded : " + strJson)
-
-		var jsonMessage JsonMessage
-		err = jsonPkg.Unmarshal([]byte(strJson), &jsonMessage)
-		if err != nil {
-			log.Fatal(fmt.Printf("error : %s", err.Error()))
-		}
+		var jsonMessage JsonMessage = decodeJsonMessage(
+			decodeMessage(m),
+		)
 
 		if jsonMessage.Channel == "Notification" {
-			notification := CreateNotification(a, NotificationOption{
-				Title:    "Test notif",
-				Subtitle: astikit.StrPtr("Test notif"),
-				Body:     fmt.Sprintf("Bonjour\n%s", jsonMessage.Data["name"]),
-			})
-
-			_ = notification.Show()
-
-			notification.On(astilectron.EventNameNotificationEventClicked, func(e astilectron.Event) (deleteListener bool) {
-				err = w.SendMessage(JsonMessage{
-					Channel: "Redirect",
-					Data:    map[string]string{"uri": "/help"},
-				})
-				if err != nil {
-					log.Fatal(fmt.Printf("error : %s", err.Error()))
-				}
-				return
-			})
+			receiveNotificationChannel(a, w, &jsonMessage)
 		}
 
 		return

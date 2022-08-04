@@ -6,5 +6,5 @@ astilectron = astilectron ?? tmpAstilectron
  * @param {Record<string, string>|Record<string, string>[]} json.data
  */
 function sendMessage(json) {
-    astilectron.sendMessage(JSON.stringify(json))
+    astilectron.sendMessage(json)
 }
