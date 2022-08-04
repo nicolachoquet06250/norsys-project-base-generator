@@ -17,18 +17,83 @@
 
     <script src="assets/init_astilectron.js"></script>
 
+
     <script>
         document.addEventListener('astilectron-ready', () => {
-            sendMessage({
-                channel: `ChooseFolder`,
-                data: {
-                    path: 'C:\\Users\\NDZQ5522\\Desktop'
+            /**
+             * @param {string} message.channel
+             * @param {Record<string, string>|Record<string, string>[]} message.data
+             * @returns {string}
+             */
+            const newMessageHandler = message => {
+                if (message.channel === "GetTree") {
+                    const tree = message.data.tree;
+
+                    console.log(tree)
+
+                    const menu = document.querySelector('.left-menu')
+
+                    const list = document.createElement('ul')
+
+                    for (const dir of tree) {
+                        const item = document.createElement('li')
+                        item.innerHTML = dir
+
+                        list.appendChild(item)
+                    }
+
+                    menu.appendChild(list)
+
+                    return tree;
                 }
-            })
+            };
+            astilectron.onMessage(newMessageHandler);
+
+            setTimeout(() => {
+                sendMessage({
+                    channel: `OpenFolder`,
+                    data: {}
+                })
+            }, 1000)
         });
     </script>
 </head>
 <body>
-    <h1>Je sélectionne un répertoire</h1>
+    <header>
+        <div class="top-bar">
+            <div class="icons"></div>
+
+            <div class="breadcrumb">
+                <div class="search-zone"></div>
+
+                <div class="icons"></div>
+            </div>
+
+            <div class="search-zone"></div>
+        </div>
+    </header>
+
+    <main>
+        <nav class="left-menu"></nav>
+
+        <div class="element-list"></div>
+    </main>
+
+    <footer>
+        <div class="search-zone">
+            <div>
+                <label for="folder">Nom du répertoire:</label>
+
+                <input id="folder" type="text">
+            </div>
+
+            <div class="buttons">
+                <button>Ouvrir</button>
+
+                <button>Annuler</button>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

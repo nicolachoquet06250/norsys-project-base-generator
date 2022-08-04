@@ -2,7 +2,9 @@ package helpers
 
 import (
 	"os"
+	"os/user"
 	"runtime"
+	"strings"
 )
 
 func IsWindows() bool {
@@ -48,13 +50,26 @@ func PwdVar() string {
 }
 
 func RootPath() string {
-	var root = "/"
+	if IsWindows() {
+		return "C:\\"
+	}
+	return "/"
+}
+
+func HomePath() string {
+	path := RootPath()
+	username := func() string {
+		u, _ := user.Current()
+		return u.Username
+	}()
 
 	if IsWindows() {
-		root = "C:\\"
+		path += "Users" + Slash() + strings.Split(username, Slash())[1]
+	} else {
+		path += "home" + Slash() + username
 	}
 
-	return root
+	return path
 }
 
 func IsBuild() bool {

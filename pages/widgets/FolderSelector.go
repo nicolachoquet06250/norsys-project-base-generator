@@ -14,8 +14,7 @@ func FolderSelector(w http.ResponseWriter, r *http.Request) {
 		CurrentPage: "folderSelector",
 		Template:    folderSelector,
 		Title: helpers.Title{
-			Tab:  "Sélecteur de répertoire",
-			Page: "Sélecteur de répertoire",
+			Tab: "Ouvrir",
 		},
 		MetaData: helpers.MetaData{},
 		CssFiles: helpers.CssFiles{},

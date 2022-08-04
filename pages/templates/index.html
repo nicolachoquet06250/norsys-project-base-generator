@@ -51,6 +51,13 @@
                 }
             })
             {{end}}
+
+            document.querySelector('#path').addEventListener('focus', () => {
+                sendMessage({
+                    channel: 'OpenFolderSelectorModal',
+                    data: {}
+                })
+            })
         })
     </script>
 </head>

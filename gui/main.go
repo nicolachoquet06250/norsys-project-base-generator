@@ -23,6 +23,24 @@ var icon string
 
 var firstLoad = true
 
+func UrlBase() string {
+	port := strconv.FormatInt(int64(portChoice.ChosenPort), 10)
+
+	return "http://127.0.0.1:" + port
+}
+
+func OpenDevTools(w *astilectron.Window, l *log.Logger) {
+	var isDevEnv = os.Getenv("OPEN_DEVTOOLS") == "1" ||
+		!strings.Contains(os.Args[0], helpers.Slash()+"b001"+helpers.Slash()+"exe"+helpers.Slash())
+
+	if isDevEnv {
+		err := w.OpenDevTools()
+		if err != nil {
+			l.Fatal(fmt.Errorf("erreur : %s", err.Error()))
+		}
+	}
+}
+
 func main() {
 	var isDevEnv = os.Getenv("OPEN_DEVTOOLS") == "1" ||
 		!strings.Contains(os.Args[0], helpers.Slash()+"b001"+helpers.Slash()+"exe"+helpers.Slash())
@@ -45,9 +63,7 @@ func main() {
 
 	loader := CreateLoader(app, logger)
 
-	port := strconv.FormatInt(int64(portChoice.ChosenPort), 10)
-
-	urlBase := "http://127.0.0.1:" + port
+	urlBase := UrlBase()
 
 	window := CreateWindow(
 		app, logger,
@@ -167,12 +183,14 @@ func main() {
 				_ = Modal.Show()
 
 				Modal.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
-					var jsonMessage JsonMessage = decodeJsonMessage(
+					var jsonMessage = decodeJsonMessage(
 						decodeMessage(m),
 					)
 
-					if jsonMessage.Channel == string(ChooseFolder) {
+					switch jsonMessage.Channel {
+					case string(ChooseFolder):
 						receiveChooseFolderChannel(app, Modal, logger, &jsonMessage, window)
+						break
 					}
 
 					return
@@ -185,12 +203,7 @@ func main() {
 	// Append menu item dynamically
 	_ = subMenu.Append(newItem)
 
-	if isDevEnv {
-		err := window.OpenDevTools()
-		if err != nil {
-			logger.Println(err.Error())
-		}
-	}
+	OpenDevTools(window, logger)
 
 	window.On(astilectron.EventNameWindowEventReadyToShow, func(e astilectron.Event) (deleteListener bool) {
 		if firstLoad == true && loader != nil {
@@ -217,12 +230,17 @@ func main() {
 	})
 
 	window.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
-		var jsonMessage JsonMessage = decodeJsonMessage(
+		var jsonMessage = decodeJsonMessage(
 			decodeMessage(m),
 		)
 
-		if jsonMessage.Channel == string(Notification) {
+		switch jsonMessage.Channel {
+		case string(Notification):
 			receiveNotificationChannel(app, window, logger, &jsonMessage, nil)
+			break
+		case string(OpenFolderSelectorModal):
+			Modal = receiveOpenFolderSelectorModalChannel(app, window, logger, &jsonMessage, nil)
+			break
 		}
 
 		return
