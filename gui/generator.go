@@ -94,8 +94,9 @@ func CreateWindow(a *astilectron.Astilectron, l *log.Logger, url string, options
 }
 
 func CreateLoader(a *astilectron.Astilectron, l *log.Logger) *astilectron.Window {
+	l.Println("------------------------ LOADER ------------------------")
 	baseUrl := "http://127.0.0.1:" + strconv.FormatInt(int64(portChoice.ChosenPort), 10)
-	return CreateWindow(
+	var w = CreateWindow(
 		a, l,
 		baseUrl+routing.RouteToString(routing.LoaderPage),
 		&astilectron.WindowOptions{
@@ -110,6 +111,8 @@ func CreateLoader(a *astilectron.Astilectron, l *log.Logger) *astilectron.Window
 		},
 		"loader",
 	)
+
+	return w
 }
 
 func CreateNotification(a *astilectron.Astilectron, l *log.Logger, o NotificationOption) *astilectron.Notification {

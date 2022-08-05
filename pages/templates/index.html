@@ -52,10 +52,15 @@
             })
             {{end}}
 
+            setTimeout(() => {
+                sendMessage({
+                    channel: 'DestroyLoader'
+                })
+            }, 1000)
+
             document.querySelector('#path').addEventListener('focus', () => {
                 sendMessage({
-                    channel: 'OpenFolderSelectorModal',
-                    data: {}
+                    channel: 'OpenFolderSelectorModal'
                 })
             })
         })

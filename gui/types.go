@@ -10,6 +10,7 @@ const (
 	OpenFolderSelectorModal Channel = "OpenFolderSelectorModal"
 	OpenFolder              Channel = "OpenFolder"
 	GetTree                 Channel = "GetTree"
+	DestroyLoader           Channel = "DestroyLoader"
 )
 
 type NotificationOption struct {

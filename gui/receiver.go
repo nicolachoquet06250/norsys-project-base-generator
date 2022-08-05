@@ -56,7 +56,7 @@ func receiveChooseFolderChannel(a *astilectron.Astilectron, w *astilectron.Windo
 }
 
 func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) *astilectron.Window {
-	Modal := CreateWindow(a, l, UrlBase()+routing.RouteToString(routing.FolderSelectorPage), &astilectron.WindowOptions{
+	Modal = CreateWindow(a, l, UrlBase()+routing.RouteToString(routing.FolderSelectorPage), &astilectron.WindowOptions{
 		Center:          astikit.BoolPtr(true),
 		Height:          astikit.IntPtr(700),
 		Width:           astikit.IntPtr(700),
@@ -116,4 +116,13 @@ func receiveOpenFolderChannel(a *astilectron.Astilectron, w *astilectron.Window,
 			"tree": tree,
 		}),
 	)
+}
+
+func receiveDestroyLoaderChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
+	err := w.Destroy()
+	l.Println("destroy Loader Window")
+	l.Println("------------------------ END LOADER ------------------------")
+	if err != nil {
+		l.Fatal(fmt.Errorf("Loader Window can't be destroy"))
+	}
 }
