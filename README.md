@@ -3,6 +3,8 @@
 Application CLI / GUI / Web permétant de générérer un template de projet 
 (plusieurs technologies sont disponibles) pour démarrer plus facilement et plus rapidement un projet.
 
+![project screenshot](.github/screenshot.png "Norsys Project Base Generator")
+
 ## Linux / MacOS
 ### CLI
 ```bash
