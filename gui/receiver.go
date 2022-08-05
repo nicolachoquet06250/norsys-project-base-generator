@@ -119,10 +119,15 @@ func receiveOpenFolderChannel(a *astilectron.Astilectron, w *astilectron.Window,
 }
 
 func receiveDestroyLoaderChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
-	err := w.Destroy()
-	l.Println("destroy Loader Window")
-	l.Println("------------------------ END LOADER ------------------------")
-	if err != nil {
-		l.Fatal(fmt.Errorf("Loader Window can't be destroy"))
+	if w != nil {
+		err := w.Destroy()
+
+		m := "destroy loader window"
+		if err != nil {
+			m = "loader window can't be destroy because doesn't exists"
+		}
+
+		l.Println(m)
+		l.Println("------------------------ END LOADER ------------------------")
 	}
 }
