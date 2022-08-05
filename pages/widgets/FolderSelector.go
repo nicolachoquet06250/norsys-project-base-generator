@@ -17,8 +17,11 @@ func FolderSelector(w http.ResponseWriter, r *http.Request) {
 			Tab: "Ouvrir",
 		},
 		MetaData: helpers.MetaData{},
-		CssFiles: helpers.CssFiles{},
-		Vars:     helpers.VoidVars(),
+		CssFiles: helpers.CssFiles{
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css",
+			"assets/folder_selector.css",
+		},
+		Vars: helpers.VoidVars(),
 	}, menu)
 
 	helpers.Text(&w, result)

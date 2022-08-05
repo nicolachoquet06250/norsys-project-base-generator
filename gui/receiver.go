@@ -45,7 +45,7 @@ func receiveChooseFolderChannel(a *astilectron.Astilectron, w *astilectron.Windo
 	_ = n.Show()
 
 	if w != nil {
-		//_ = w.Destroy()
+		_ = w.Destroy()
 
 		_ = main.SendMessage(
 			NewMessage(PutFolder, map[string]string{

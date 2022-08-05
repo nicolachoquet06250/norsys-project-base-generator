@@ -17,8 +17,19 @@
 
     <script src="assets/init_astilectron.js"></script>
 
-
     <script>
+        const onItemClicked = e => {
+            const element = e.target.parentElement;
+
+            if (element.classList.contains('opened')) {
+                element.classList.remove('opened');
+                element.classList.add('closed');
+            } else {
+                element.classList.remove('closed');
+                element.classList.add('opened');
+            }
+        };
+
         document.addEventListener('astilectron-ready', () => {
             /**
              * @param {string} message.channel
@@ -26,23 +37,51 @@
              * @returns {string}
              */
             const newMessageHandler = message => {
-                if (message.channel === "GetTree") {
+                if (message.channel === 'GetTree') {
                     const tree = message.data.tree;
 
-                    console.log(tree)
-
                     const menu = document.querySelector('.left-menu')
+
+                    const mainList = document.createElement('ul')
+
+                    const item = document.createElement('li')
+                    item.style.paddingBottom = '5px';
+                    item.classList.add('opened')
+
+                    const folderIcon = document.createElement('i');
+                    folderIcon.classList.add('fa-solid', 'fa-house')
+                    folderIcon.addEventListener('click', onItemClicked)
+                    item.appendChild(folderIcon)
+
+                    const text = document.createElement('span')
+                    text.innerHTML = 'Home'
+                    text.addEventListener('click', onItemClicked)
+                    item.appendChild(text)
+
+                    mainList.appendChild(item)
 
                     const list = document.createElement('ul')
 
                     for (const dir of tree) {
                         const item = document.createElement('li')
-                        item.innerHTML = dir
+                        item.classList.add('closed')
+
+                        const folderIcon = document.createElement('i');
+                        folderIcon.classList.add('fa-solid', 'fa-folder')
+                        folderIcon.addEventListener('click', onItemClicked)
+                        item.appendChild(folderIcon)
+
+                        const text = document.createElement('span')
+                        text.innerHTML = dir
+                        text.addEventListener('click', onItemClicked)
+                        item.appendChild(text)
 
                         list.appendChild(item)
                     }
 
-                    menu.appendChild(list)
+                    item.appendChild(list)
+
+                    menu.appendChild(mainList)
 
                     return tree;
                 }
@@ -56,20 +95,62 @@
                 })
             }, 1000)
         });
+
+        window.addEventListener('load', () => {
+            document.querySelector('#open').addEventListener('click', () => {
+                const folderElement = document.querySelector('#folder')
+                if (folderElement.value !== '') {
+                    sendMessage({
+                        channel: 'ChooseFolder',
+                        data: {
+                            path: folderElement.value
+                        }
+                    })
+                }
+            })
+        })
     </script>
 </head>
 <body>
-    <header>
-        <div class="top-bar">
-            <div class="icons"></div>
+    <header class="top-bar">
+        <div class="icons">
+            <i class="fa-solid fa-arrow-left"></i>
 
-            <div class="breadcrumb">
-                <div class="search-zone"></div>
+            <i class="fa-solid fa-arrow-right"></i>
 
-                <div class="icons"></div>
+            <i class="fa-solid fa-arrow-up"></i>
+        </div>
+
+        <div class="breadcrumb">
+            <div class="icons">
+                <i class="fa-solid fa-folder"></i>
+
+                <span class="chevron-double-left">
+                    <i class="fa-solid fa-chevron-left"></i>
+                    <i class="fa-solid fa-chevron-left"></i>
+                </span>
+
             </div>
 
-            <div class="search-zone"></div>
+            <div class="breadcrumb-zone">
+                <div class="breadcrumb-zone-item">norsys-project-base-generator</div>
+
+                <div class="breadcrumb-zone-item">gui</div>
+            </div>
+
+            <div class="icons">
+                <i class="fa-solid fa-chevron-down"></i>
+
+                <i class="fa-solid fa-rotate-right"></i>
+            </div>
+        </div>
+
+        <div class="search-zone">
+            <label for="search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </label>
+
+            <input id="search" type="text" placeholder="Rechercher dans : gui">
         </div>
     </header>
 
@@ -82,18 +163,19 @@
     <footer>
         <div class="search-zone">
             <div>
-                <label for="folder">Nom du répertoire:</label>
+                <label for="folder">
+                    <b>Nom du répertoire:</b>
+                </label>
 
                 <input id="folder" type="text">
             </div>
 
             <div class="buttons">
-                <button>Ouvrir</button>
+                <button id="open">Ouvrir</button>
 
                 <button>Annuler</button>
             </div>
         </div>
     </footer>
-
 </body>
 </html>

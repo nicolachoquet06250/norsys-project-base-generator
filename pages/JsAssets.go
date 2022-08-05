@@ -14,6 +14,9 @@ var bootstrapProdJs string
 //go:embed templates/assets/bootstrap/js/bootstrap.js
 var bootstrapHorsProdJs string
 
+//go:embed templates/assets/init_astilectron.js
+var initAstilectronJs string
+
 const (
 	ASTILECTRON = "init_astilectron"
 )

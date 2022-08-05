@@ -79,7 +79,7 @@ func main() {
 
 	var menu = app.NewMenu([]*astilectron.MenuItemOptions{
 		{
-			Label: astikit.StrPtr("Separator"),
+			Label: astikit.StrPtr("File"),
 			SubMenu: []*astilectron.MenuItemOptions{
 				{Label: astikit.StrPtr("Normal 1")},
 				{Label: astikit.StrPtr("Normal 2")},
@@ -87,7 +87,7 @@ func main() {
 				{Label: astikit.StrPtr("Normal 3")},
 			},
 		},
-		{
+		/*{
 			Label: astikit.StrPtr("Checkbox"),
 			SubMenu: []*astilectron.MenuItemOptions{
 				{Checked: astikit.BoolPtr(true), Label: astikit.StrPtr("Checkbox 1"), Type: astilectron.MenuItemTypeCheckbox},
@@ -102,7 +102,7 @@ func main() {
 				{Label: astikit.StrPtr("Radio 2"), Type: astilectron.MenuItemTypeRadio},
 				{Label: astikit.StrPtr("Radio 3"), Type: astilectron.MenuItemTypeRadio},
 			},
-		},
+		},*/
 		{
 			Label: astikit.StrPtr("Aide"),
 			SubMenu: []*astilectron.MenuItemOptions{
@@ -144,16 +144,13 @@ func main() {
 	_ = menuItem.SetChecked(true)
 
 	// Init a new menu item
-	var newItem = menu.NewItem(&astilectron.MenuItemOptions{
-		Label: astikit.StrPtr("Inserted"),
-		SubMenu: []*astilectron.MenuItemOptions{
-			{Label: astikit.StrPtr("Inserted 1")},
-			{Label: astikit.StrPtr("Inserted 2")},
-		},
+	/*var newItem = menu.NewItem(&astilectron.MenuItemOptions{
+		Label:   astikit.StrPtr("Inserted"),
+		SubMenu: []*astilectron.MenuItemOptions{},
 	})
 
 	// Insert the menu item at position "1"
-	_ = menu.Insert(1, newItem)
+	_ = menu.Insert(1, newItem)*/
 
 	// Fetch a sub menu
 	subMenu, _ := menu.SubMenu(0)
@@ -161,7 +158,7 @@ func main() {
 	var Modal *astilectron.Window
 
 	// Init a new menu item
-	newItem = subMenu.NewItem(&astilectron.MenuItemOptions{
+	var newItem = subMenu.NewItem(&astilectron.MenuItemOptions{
 		Label: astikit.StrPtr("Appended"),
 		SubMenu: []*astilectron.MenuItemOptions{
 			{Label: astikit.StrPtr("Appended 1")},
@@ -226,6 +223,10 @@ func main() {
 
 	window.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
 		_ = loader.Destroy()
+
+		if Modal != nil {
+			_ = Modal.Destroy()
+		}
 		return
 	})
 

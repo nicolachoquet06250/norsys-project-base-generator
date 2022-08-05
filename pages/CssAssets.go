@@ -17,6 +17,9 @@ var generateCss string
 //go:embed templates/assets/loader.css
 var loaderCss string
 
+//go:embed templates/assets/folder_selector.css
+var folderSelectorCss string
+
 //go:embed templates/assets/help.css
 var helpCss string
 
@@ -32,16 +35,26 @@ var bootstrapHorsProdCssMap string
 //go:embed templates/assets/bootstrap/css/bootstrap.min.css.map
 var bootstrapProdCssMap string
 
-//go:embed templates/assets/init_astilectron.js
-var initAstilectronJs string
-
 const (
-	HOME     = "home"
-	LOADER   = "loader"
-	GENERATE = "generate"
-	HELP     = "help"
-	VOID     = ""
+	HOME            = "home"
+	LOADER          = "loader"
+	GENERATE        = "generate"
+	HELP            = "help"
+	FOLDER_SELECROR = "folder_selector"
+	VOID            = ""
 )
+
+func getCssContentFromSource(source string) string {
+	re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
+	substitution := "{{ .$variable }}"
+	source = re.ReplaceAllString(source, substitution)
+
+	re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
+	substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
+	source = re.ReplaceAllString(source, substitution)
+
+	return source
+}
 
 func CssAssets(w http.ResponseWriter, r *http.Request) {
 	fileName := mux.Vars(r)["file"]
@@ -50,45 +63,15 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 		file := func() string {
 			switch fileName {
 			case HOME:
-				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
-				substitution := "{{ .$variable }}"
-				homeCss = re.ReplaceAllString(homeCss, substitution)
-
-				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
-				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
-				homeCss = re.ReplaceAllString(homeCss, substitution)
-
-				return homeCss
+				return getCssContentFromSource(homeCss)
 			case LOADER:
-				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
-				substitution := "{{ .$variable }}"
-				loaderCss = re.ReplaceAllString(loaderCss, substitution)
-
-				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
-				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
-				loaderCss = re.ReplaceAllString(loaderCss, substitution)
-
-				return loaderCss
+				return getCssContentFromSource(loaderCss)
 			case GENERATE:
-				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
-				substitution := "{{ .$variable }}"
-				generateCss = re.ReplaceAllString(generateCss, substitution)
-
-				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
-				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
-				generateCss = re.ReplaceAllString(generateCss, substitution)
-
-				return generateCss
+				return getCssContentFromSource(generateCss)
+			case FOLDER_SELECROR:
+				return getCssContentFromSource(folderSelectorCss)
 			case HELP:
-				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
-				substitution := "{{ .$variable }}"
-				helpCss = re.ReplaceAllString(helpCss, substitution)
-
-				re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
-				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
-				helpCss = re.ReplaceAllString(helpCss, substitution)
-
-				return helpCss
+				return getCssContentFromSource(helpCss)
 			default:
 				return VOID
 			}
