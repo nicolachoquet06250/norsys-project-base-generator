@@ -63,7 +63,6 @@ jobs:
           binary_name: norsys-project-base-generator-gui-linux-amd64
           project_path: ./gui
           retry: 3
-          ldflags: "-H windowsgui"
   release-windows-amd64:
     name: release windows/amd64
     runs-on: ubuntu-latest
