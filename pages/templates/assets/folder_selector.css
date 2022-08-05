@@ -27,7 +27,7 @@ body > header.top-bar > .icons > .fa-solid {
 }
 
 body > header.top-bar > .icons > .fa-solid:last-child {
-    color: #FFF;
+    color: #000000;
 }
 
 body > header.top-bar > .breadcrumb {
@@ -102,8 +102,7 @@ body .fa-solid.fa-folder {
 
 body > header.top-bar > .search-zone {
     width: 200px;
-    padding: 4px;
-    padding-left: 15px;
+    padding: 4px 4px 4px 15px;
     margin: 4px;
     border: 2px solid #4F4F4F;
     display: flex;
