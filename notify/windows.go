@@ -9,7 +9,6 @@ import (
 	"errors"
 	"npbg/http/portChoice"
 	"os/exec"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -22,20 +21,6 @@ import (
 
 var isWindows10 bool
 var applicationID string
-
-func pathAbs(path string) string {
-	var err error
-	var abs string
-
-	if path != "" {
-		abs, err = filepath.Abs(path)
-		if err != nil {
-			abs = path
-		}
-	}
-
-	return abs
-}
 
 func init() {
 	k, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Microsoft\Windows NT\CurrentVersion`, registry.QUERY_VALUE)
