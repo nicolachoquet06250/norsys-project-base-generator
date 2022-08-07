@@ -102,16 +102,6 @@
         };
 
         document.addEventListener('astilectron-ready', () => {
-            const getTreeNode = (treeNode, treePath) => {
-                for (const node of treeNode) {
-                    if (node.getAttribute('data-dir') === treePath) {
-                        return node
-                    } else if (node.children.length > 0) {
-                        return getTreeNode(node, treePath)
-                    }
-                }
-            };
-
             /**
              * @param {string} message.channel
              * @param {Record<string, string>|Record<string, string>[]} message.data
