@@ -59,9 +59,9 @@
             }, 1000)
 
             document.querySelector('#path').addEventListener('focus', () => {
-                sendMessage({
-                    channel: 'OpenFolderSelectorModal'
-                })
+                sendMessage({ channel: 'OpenFolderSelectorModal' });
+
+                document.querySelector('#path').blur();
             })
         })
     </script>

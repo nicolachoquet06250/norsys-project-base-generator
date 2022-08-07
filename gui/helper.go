@@ -20,7 +20,7 @@ func UrlBase() string {
 }
 
 func IsDevEnv() bool {
-	return os.Getenv("OPEN_DEVTOOLS") == "1" ||
+	return os.Getenv("OPEN_DEVTOOLS") == "1" &&
 		strings.Contains(os.Args[0], helpers.Slash()+"b001"+helpers.Slash()+"exe"+helpers.Slash())
 }
 

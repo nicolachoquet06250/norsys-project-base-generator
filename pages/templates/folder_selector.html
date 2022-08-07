@@ -18,8 +18,79 @@
     <script src="assets/init_astilectron.js"></script>
 
     <script>
+        const buildTree = (tree, baseTree, pathSeparator, isRoot) => {
+            let item, mainList
+
+            if (isRoot) {
+                mainList = document.createElement('ul')
+
+                item = document.createElement('li')
+                item.style.paddingBottom = '5px';
+                item.classList.add('opened')
+
+                const folderIcon = document.createElement('i');
+                folderIcon.classList.add('fa-solid', 'fa-house')
+                folderIcon.addEventListener('click', onItemClicked)
+                item.appendChild(folderIcon)
+
+                const text = document.createElement('span')
+                text.innerHTML = 'Home'
+                text.addEventListener('click', onItemClicked)
+                item.appendChild(text)
+
+                mainList.appendChild(item)
+            }
+
+            const list = document.createElement('ul')
+
+            for (const dir of tree) {
+                const item = document.createElement('li')
+                item.setAttribute('data-dir', (baseTree + pathSeparator + dir).replaceAll(/[:\/\\ ]/g, '-'))
+                item.setAttribute('data-path', baseTree + pathSeparator + dir)
+                item.classList.add('closed', 'tree-item')
+
+                const folderIcon = document.createElement('i');
+                folderIcon.classList.add('fa-solid', 'fa-folder')
+                folderIcon.addEventListener('click', onItemClicked)
+                item.appendChild(folderIcon)
+
+                const text = document.createElement('span')
+                text.innerHTML = dir
+                text.addEventListener('click', onItemClicked)
+                item.appendChild(text)
+
+                const input = document.createElement('input')
+                input.setAttribute('type', 'hidden')
+                input.value = baseTree + pathSeparator + dir
+                item.appendChild(input)
+
+                const subList = document.createElement('ul')
+                item.appendChild(subList)
+
+                list.appendChild(item)
+            }
+
+            if (isRoot) {
+                item.appendChild(list)
+
+                return mainList
+            }
+
+            return Array.from(list.children)
+        };
+
         const onItemClicked = e => {
             const element = e.target.parentElement;
+            const list = element.querySelector('ul')
+
+            if (list.children.length === 0) {
+                sendMessage({
+                    channel: 'OpenFolder',
+                    data: {
+                        folder: element.getAttribute('data-path')
+                    }
+                })
+            }
 
             if (element.classList.contains('opened')) {
                 element.classList.remove('opened');
@@ -31,6 +102,16 @@
         };
 
         document.addEventListener('astilectron-ready', () => {
+            const getTreeNode = (treeNode, treePath) => {
+                for (const node of treeNode) {
+                    if (node.getAttribute('data-dir') === treePath) {
+                        return node
+                    } else if (node.children.length > 0) {
+                        return getTreeNode(node, treePath)
+                    }
+                }
+            };
+
             /**
              * @param {string} message.channel
              * @param {Record<string, string>|Record<string, string>[]} message.data
@@ -39,49 +120,37 @@
             const newMessageHandler = message => {
                 if (message.channel === 'GetTree') {
                     const tree = message.data.tree;
+                    const basePath = message.data.basePath;
+                    const pathSeparator = message.data.pathSeparator;
+                    const isRoot = message.data.isHome;
 
-                    const menu = document.querySelector('.left-menu')
+                    console.log(basePath)
 
-                    const mainList = document.createElement('ul')
+                    let root = document.querySelector('.left-menu')
+                        .querySelector(`[data-dir="${basePath.replaceAll(/[:\/\\ ]/g, '-')}"]`)
+                        ?.querySelector('ul');
 
-                    const item = document.createElement('li')
-                    item.style.paddingBottom = '5px';
-                    item.classList.add('opened')
+                    console.log(root)
 
-                    const folderIcon = document.createElement('i');
-                    folderIcon.classList.add('fa-solid', 'fa-house')
-                    folderIcon.addEventListener('click', onItemClicked)
-                    item.appendChild(folderIcon)
+                    console.log(isRoot)
 
-                    const text = document.createElement('span')
-                    text.innerHTML = 'Home'
-                    text.addEventListener('click', onItemClicked)
-                    item.appendChild(text)
-
-                    mainList.appendChild(item)
-
-                    const list = document.createElement('ul')
-
-                    for (const dir of tree) {
-                        const item = document.createElement('li')
-                        item.classList.add('closed')
-
-                        const folderIcon = document.createElement('i');
-                        folderIcon.classList.add('fa-solid', 'fa-folder')
-                        folderIcon.addEventListener('click', onItemClicked)
-                        item.appendChild(folderIcon)
-
-                        const text = document.createElement('span')
-                        text.innerHTML = dir
-                        text.addEventListener('click', onItemClicked)
-                        item.appendChild(text)
-
-                        list.appendChild(item)
+                    if (isRoot) {
+                        root = document.querySelector('.left-menu');
                     }
 
-                    item.appendChild(list)
+                    console.log(root);
 
-                    menu.appendChild(mainList)
+                    const builtTree = buildTree(tree, basePath, pathSeparator, isRoot)
+
+                    if (isRoot) {
+                        root.appendChild(
+                            buildTree(tree, basePath, pathSeparator, isRoot)
+                        )
+                    } else {
+                        for (const element of builtTree) {
+                            root.appendChild(element)
+                        }
+                    }
 
                     return tree;
                 }

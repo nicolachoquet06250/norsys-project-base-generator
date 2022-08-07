@@ -9,30 +9,9 @@ import (
 	"npbg/history"
 	"npbg/http/portChoice"
 	"npbg/http/routing"
+	"npbg/notify"
 	"strconv"
 )
-
-func toAstilectronNotificationOptions(o *NotificationOption) (options *astilectron.NotificationOptions) {
-	options = &astilectron.NotificationOptions{
-		Title:            o.Title,
-		Icon:             history.GetIconPath(),
-		Body:             o.Body,
-		ReplyPlaceholder: "type your reply here", // Only MacOSX
-		HasReply:         astikit.BoolPtr(true),  // Only MacOSX
-	}
-	if o.Subtitle != nil {
-		options = &astilectron.NotificationOptions{
-			Title:            o.Title,
-			Subtitle:         *o.Subtitle,
-			Icon:             history.GetIconPath(),
-			Body:             o.Body,
-			ReplyPlaceholder: "type your reply here", // Only MacOSX
-			HasReply:         astikit.BoolPtr(true),  // Only MacOSX
-		}
-	}
-
-	return options
-}
 
 func GenerateIcon() {
 	_icon := files.NewFile(history.GetIconPath())
@@ -46,9 +25,9 @@ func GenerateIcon() {
 	}
 }
 
-func CreateApp(l *log.Logger, name string) *astilectron.Astilectron {
+func CreateApp(name string, l *log.Logger) (a *astilectron.Astilectron) {
 	// Initialize astilectron
-	var a, err = astilectron.New(l, astilectron.Options{
+	a, err := astilectron.New(l, astilectron.Options{
 		AppName:           name,
 		BaseDirectoryPath: "gui",
 	})
@@ -72,10 +51,10 @@ func CreateApp(l *log.Logger, name string) *astilectron.Astilectron {
 		l.Fatal(fmt.Errorf("main: starting astilectron failed: %w", err))
 	}
 
-	return a
+	return
 }
 
-func CreateWindow(a *astilectron.Astilectron, l *log.Logger, url string, options *astilectron.WindowOptions, name ...string) *astilectron.Window {
+func CreateWindow(a *astilectron.Astilectron, l *log.Logger, url string, options *astilectron.WindowOptions, name ...string) (w *astilectron.Window) {
 	if len(name) == 0 {
 		name = append(name, "main")
 	}
@@ -90,13 +69,13 @@ func CreateWindow(a *astilectron.Astilectron, l *log.Logger, url string, options
 		l.Fatal(fmt.Errorf("%s: creating window failed: %w", name[0], err))
 	}
 
-	return w
+	return
 }
 
-func CreateLoader(a *astilectron.Astilectron, l *log.Logger) *astilectron.Window {
+func CreateLoader(a *astilectron.Astilectron, l *log.Logger) (w *astilectron.Window) {
 	l.Println("------------------------ LOADER ------------------------")
 	baseUrl := "http://127.0.0.1:" + strconv.FormatInt(int64(portChoice.ChosenPort), 10)
-	var w = CreateWindow(
+	w = CreateWindow(
 		a, l,
 		baseUrl+routing.RouteToString(routing.LoaderPage),
 		&astilectron.WindowOptions{
@@ -112,19 +91,16 @@ func CreateLoader(a *astilectron.Astilectron, l *log.Logger) *astilectron.Window
 		"loader",
 	)
 
-	return w
+	return
 }
 
-func CreateNotification(a *astilectron.Astilectron, l *log.Logger, o NotificationOption) *astilectron.Notification {
-	n := a.NewNotification(
-		toAstilectronNotificationOptions(&o),
+func CreateNotification(l *log.Logger, o NotificationOption) {
+	err := beeep.Notify(
+		o.Title, o.Body,
+		history.GetIconPath(),
+		astikit.StrPtr("Norsys Project Base Generator"),
 	)
-
-	err := n.Create()
-
 	if err != nil {
-		l.Fatal(fmt.Errorf("erreur: new notification failed: %w", err))
+		l.Fatal(fmt.Errorf("error : %s", err))
 	}
-
-	return n
 }

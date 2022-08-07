@@ -23,7 +23,8 @@ func main() {
 
 	GenerateIcon()
 
-	app := CreateApp(logger, "NPBG")
+	app := CreateApp("NPBG", logger)
+
 	defer app.Close()
 
 	urlBase := UrlBase()
@@ -111,13 +112,13 @@ func main() {
 
 		switch jsonMessage.Channel {
 		case string(Notification):
-			receiveNotificationChannel(app, Window, logger, &jsonMessage, nil)
+			receiveNotificationChannel(logger, &jsonMessage)
 			break
 		case string(OpenFolderSelectorModal):
-			Modal = receiveOpenFolderSelectorModalChannel(app, Window, logger, &jsonMessage, nil)
+			Modal = receiveOpenFolderSelectorModalChannel(app, Window, logger)
 			break
 		case string(DestroyLoader):
-			receiveDestroyLoaderChannel(app, Loader, logger, &jsonMessage, Window)
+			receiveDestroyLoaderChannel(Loader, logger)
 			break
 		}
 

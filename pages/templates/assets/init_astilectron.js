@@ -10,4 +10,5 @@ function sendMessage(json) {
         json.data = {}
     }
     astilectron.sendMessage(json)
+    console.log(json, "sent")
 }

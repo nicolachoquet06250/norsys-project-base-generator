@@ -14,9 +14,8 @@ const (
 )
 
 type NotificationOption struct {
-	Title    string
-	Subtitle *string
-	Body     string
+	Title string
+	Body  string
 }
 
 type JsonMessage struct {

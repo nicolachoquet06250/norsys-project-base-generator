@@ -9,9 +9,10 @@ import (
 	"npbg/helpers"
 	"npbg/history"
 	"npbg/http/routing"
+	"strings"
 )
 
-func receiveNotificationChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
+func receiveNotificationChannel(l *log.Logger, message *JsonMessage) {
 	body := fmt.Sprintf("Bonjour\n%s", message.Data["name"])
 	if message.Data["body"] != "" {
 		body = message.Data["body"]
@@ -22,27 +23,21 @@ func receiveNotificationChannel(a *astilectron.Astilectron, w *astilectron.Windo
 		title = message.Data["title"]
 	}
 
-	n := CreateNotification(a, l, NotificationOption{
-		Title:    title,
-		Subtitle: astikit.StrPtr(title),
-		Body:     body,
-	})
+	println("NOTIFICATION : " + title + ", " + body)
 
-	_ = n.Show()
+	CreateNotification(l, NotificationOption{
+		Title: title,
+		Body:  body,
+	})
 }
 
-func receiveChooseFolderChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
+func receiveChooseFolderChannel(w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
 	folderPath := message.Data["path"]
 
-	//println("path : " + folderPath)
-
-	n := CreateNotification(a, l, NotificationOption{
-		Title:    "Répertoire choisis",
-		Subtitle: astikit.StrPtr("Répertoire choisis"),
-		Body:     folderPath,
+	CreateNotification(l, NotificationOption{
+		Title: "Répertoire choisis",
+		Body:  folderPath,
 	})
-
-	_ = n.Show()
 
 	if w != nil {
 		_ = w.Destroy()
@@ -55,7 +50,7 @@ func receiveChooseFolderChannel(a *astilectron.Astilectron, w *astilectron.Windo
 	}
 }
 
-func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) *astilectron.Window {
+func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger) *astilectron.Window {
 	Modal = CreateWindow(a, l, UrlBase()+routing.RouteToString(routing.FolderSelectorPage), &astilectron.WindowOptions{
 		Center:          astikit.BoolPtr(true),
 		Height:          astikit.IntPtr(700),
@@ -78,10 +73,10 @@ func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astile
 
 		switch jsonMessage.Channel {
 		case string(ChooseFolder):
-			receiveChooseFolderChannel(a, Modal, l, &jsonMessage, w)
+			receiveChooseFolderChannel(Modal, l, &jsonMessage, w)
 			break
 		case string(OpenFolder):
-			go receiveOpenFolderChannel(a, Modal, l, &jsonMessage, w)
+			go receiveOpenFolderChannel(Modal, &jsonMessage)
 			break
 		}
 
@@ -91,12 +86,10 @@ func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astile
 	return Modal
 }
 
-func receiveOpenFolderChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
+func receiveOpenFolderChannel(w *astilectron.Window, message *JsonMessage) {
 	if message.Data["folder"] == "" {
 		message.Data["folder"] = helpers.HomePath()
 	}
-
-	println(message.Data["folder"])
 
 	files, err := ioutil.ReadDir(message.Data["folder"])
 	if err != nil {
@@ -111,14 +104,19 @@ func receiveOpenFolderChannel(a *astilectron.Astilectron, w *astilectron.Window,
 		}
 	}
 
+	println(strings.Join(tree, ", "))
+
 	_ = w.SendMessage(
 		NewArrayMessage(GetTree, map[string]interface{}{
-			"tree": tree,
+			"basePath":      message.Data["folder"],
+			"tree":          tree,
+			"pathSeparator": helpers.Slash(),
+			"isHome":        message.Data["folder"] == helpers.HomePath(),
 		}),
 	)
 }
 
-func receiveDestroyLoaderChannel(a *astilectron.Astilectron, w *astilectron.Window, l *log.Logger, message *JsonMessage, main *astilectron.Window) {
+func receiveDestroyLoaderChannel(w *astilectron.Window, l *log.Logger) {
 	if w != nil {
 		err := w.Destroy()
 
