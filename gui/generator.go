@@ -6,12 +6,22 @@ import (
 	"github.com/asticode/go-astilectron"
 	"log"
 	"npbg/files"
+	"npbg/helpers"
 	"npbg/history"
 	"npbg/http/portChoice"
 	"npbg/http/routing"
-	"npbg/notify"
+	"npbg/notifications"
 	"strconv"
+	"strings"
 )
+
+var GeneratedPreventionAlert *helpers.Alert
+var GeneratedAlert *helpers.Alert
+
+func init() {
+	GeneratedPreventionAlert = new(helpers.Alert)
+	GeneratedAlert = new(helpers.Alert)
+}
 
 func GenerateIcon() {
 	_icon := files.NewFile(history.GetIconPath())
@@ -20,7 +30,7 @@ func GenerateIcon() {
 	if !exists {
 		err := _icon.Create(icon, true)
 		if err != nil {
-			log.Fatal(fmt.Printf("can't create icon locally"))
+			log.Fatal(fmt.Errorf("can't create icon locally"))
 		}
 	}
 }
@@ -95,12 +105,33 @@ func CreateLoader(a *astilectron.Astilectron, l *log.Logger) (w *astilectron.Win
 }
 
 func CreateNotification(l *log.Logger, o NotificationOption) {
-	err := beeep.Notify(
+	err := notifications.Notify(
 		o.Title, o.Body,
 		history.GetIconPath(),
 		astikit.StrPtr("Norsys Project Base Generator"),
 	)
 	if err != nil {
-		l.Fatal(fmt.Errorf("error : %s", err))
+		if strings.Contains(err.Error(), "not compatible") {
+			GeneratedPreventionAlert = GenerateAlert(err.Error(), helpers.ERROR)
+
+			message := o.Title + "<br />" + o.Body
+			var status helpers.AlertStatus
+			if strings.Contains(strings.ToLower(message), "succès") {
+				status = helpers.SUCCESS
+			} else if strings.Contains(strings.ToLower(message), "erreur") {
+				status = helpers.ERROR
+			} else {
+				status = helpers.INFO
+			}
+
+			GeneratedAlert = GenerateAlert(message, status)
+		} else {
+			l.Fatal(fmt.Errorf("error : %s", err))
+		}
 	}
+}
+
+func GenerateAlert(message string, status helpers.AlertStatus) *helpers.Alert {
+	a := helpers.NewAlert(message, status)
+	return &a
 }

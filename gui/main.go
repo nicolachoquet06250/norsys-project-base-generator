@@ -49,7 +49,7 @@ func main() {
 		logger.Fatal(fmt.Errorf("main Window can't be showed"))
 	}
 
-	_ = app.NewMenu([]*astilectron.MenuItemOptions{
+	err = app.NewMenu([]*astilectron.MenuItemOptions{
 		{
 			Label: astikit.StrPtr("File"),
 			SubMenu: []*astilectron.MenuItemOptions{
@@ -70,7 +70,7 @@ func main() {
 							NewMessage(Redirect, map[string]string{"uri": routing.RouteToString(routing.HelpPage)}),
 						)
 						if err != nil {
-							log.Fatal(fmt.Printf("error : %s", err.Error()))
+							log.Fatal(fmt.Errorf("error : %s", err.Error()))
 						}
 						return
 					},
@@ -82,6 +82,9 @@ func main() {
 			},
 		},
 	}).Create()
+	if err != nil {
+		logger.Fatal(fmt.Errorf("fail to create menu %s", err))
+	}
 
 	OpenDevTools(Window, logger)
 
@@ -96,11 +99,17 @@ func main() {
 
 	Window.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
 		if Loader != nil {
-			_ = Loader.Destroy()
+			err = Loader.Destroy()
+			if err != nil {
+				logger.Fatal(fmt.Errorf("fail to destroy loader %s", err))
+			}
 		}
 
 		if Modal != nil {
-			_ = Modal.Destroy()
+			err = Modal.Destroy()
+			if err != nil {
+				logger.Fatal(fmt.Errorf("fail to destroy modal %s", err))
+			}
 		}
 		return
 	})
@@ -120,6 +129,26 @@ func main() {
 		case string(DestroyLoader):
 			receiveDestroyLoaderChannel(Loader, logger)
 			break
+		}
+
+		if GeneratedPreventionAlert != nil {
+			err = Window.SendMessage(NewMessage(ShowAlert, map[string]string{
+				"message": GeneratedPreventionAlert.Message,
+				"type":    string(GeneratedPreventionAlert.Type),
+			}))
+			if err != nil {
+				log.Println(fmt.Errorf("main send message error : %s", err))
+			}
+		}
+
+		if GeneratedAlert != nil {
+			err = Window.SendMessage(NewMessage(ShowAlert, map[string]string{
+				"message": GeneratedAlert.Message,
+				"type":    string(GeneratedAlert.Type),
+			}))
+			if err != nil {
+				log.Println(fmt.Errorf("main window send message error : %s", err))
+			}
 		}
 
 		return

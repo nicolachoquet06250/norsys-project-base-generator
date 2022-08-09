@@ -9,7 +9,6 @@ import (
 	"npbg/helpers"
 	"npbg/history"
 	"npbg/http/routing"
-	"strings"
 )
 
 func receiveNotificationChannel(l *log.Logger, message *JsonMessage) {
@@ -40,13 +39,19 @@ func receiveChooseFolderChannel(w *astilectron.Window, l *log.Logger, message *J
 	})
 
 	if w != nil {
-		_ = w.Destroy()
+		err := w.Destroy()
+		if err != nil {
+			l.Fatal(fmt.Errorf("fail to destroy window %s", err))
+		}
 
-		_ = main.SendMessage(
+		err = main.SendMessage(
 			NewMessage(PutFolder, map[string]string{
 				"folder": folderPath,
 			}),
 		)
+		if err != nil {
+			l.Fatal(fmt.Errorf("fail to send message to main window %s", err))
+		}
 	}
 }
 
@@ -64,7 +69,10 @@ func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astile
 
 	OpenDevTools(Modal, l)
 
-	_ = Modal.Show()
+	err := Modal.Show()
+	if err != nil {
+		l.Fatal(fmt.Errorf("fail to show modal %s", err))
+	}
 
 	Modal.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
 		var jsonMessage = decodeJsonMessage(
@@ -76,8 +84,28 @@ func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astile
 			receiveChooseFolderChannel(Modal, l, &jsonMessage, w)
 			break
 		case string(OpenFolder):
-			go receiveOpenFolderChannel(Modal, &jsonMessage)
+			go receiveOpenFolderChannel(Modal, l, &jsonMessage)
 			break
+		}
+
+		if GeneratedPreventionAlert != nil {
+			err = w.SendMessage(NewMessage(ShowAlert, map[string]string{
+				"message": GeneratedPreventionAlert.Message,
+				"type":    string(GeneratedPreventionAlert.Type),
+			}))
+			if err != nil {
+				log.Println(fmt.Errorf("main window send message error : %s", err))
+			}
+		}
+
+		if GeneratedAlert != nil {
+			err = w.SendMessage(NewMessage(ShowAlert, map[string]string{
+				"message": GeneratedAlert.Message,
+				"type":    string(GeneratedAlert.Type),
+			}))
+			if err != nil {
+				log.Println(fmt.Errorf("main window send message error : %s", err))
+			}
 		}
 
 		return
@@ -86,7 +114,7 @@ func receiveOpenFolderSelectorModalChannel(a *astilectron.Astilectron, w *astile
 	return Modal
 }
 
-func receiveOpenFolderChannel(w *astilectron.Window, message *JsonMessage) {
+func receiveOpenFolderChannel(w *astilectron.Window, l *log.Logger, message *JsonMessage) {
 	if message.Data["folder"] == "" {
 		message.Data["folder"] = helpers.HomePath()
 	}
@@ -104,9 +132,7 @@ func receiveOpenFolderChannel(w *astilectron.Window, message *JsonMessage) {
 		}
 	}
 
-	println(strings.Join(tree, ", "))
-
-	_ = w.SendMessage(
+	err = w.SendMessage(
 		NewArrayMessage(GetTree, map[string]interface{}{
 			"basePath":      message.Data["folder"],
 			"tree":          tree,
@@ -114,6 +140,9 @@ func receiveOpenFolderChannel(w *astilectron.Window, message *JsonMessage) {
 			"isHome":        message.Data["folder"] == helpers.HomePath(),
 		}),
 	)
+	if err != nil {
+		l.Fatal(fmt.Errorf("fail to send message to window %s", err))
+	}
 }
 
 func receiveDestroyLoaderChannel(w *astilectron.Window, l *log.Logger) {

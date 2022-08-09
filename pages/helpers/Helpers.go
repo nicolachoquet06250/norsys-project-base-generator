@@ -3,6 +3,7 @@ package helpers
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"npbg/helpers"
 	"npbg/technos"
@@ -41,21 +42,27 @@ func ParseMenu(currentPage string, menu string) (template.HTML, error) {
 	return template.HTML(tmpWriter.String()), nil
 }
 
-func ParsePage(name string, tpl string, vars *map[string]interface{}, menu string) (string, error) {
-	(*vars)["Menu"], _ = ParseMenu(name, menu)
+func ParsePage(name string, tpl string, vars *map[string]interface{}, menu string) (str string, err error) {
+	var t *template.Template
 
-	t, err := template.New(name + ".html").Parse(tpl)
+	(*vars)["Menu"], err = ParseMenu(name, menu)
+
+	t, err = template.New(name + ".html").Parse(tpl)
 	if err != nil {
-		return "", err
+		str = ""
+		return
 	}
 
 	tmpWriter := new(strings.Builder)
 	err = t.Execute(tmpWriter, &vars)
 	if err != nil {
-		return "", err
+		str = ""
+		return
 	}
 
-	return tmpWriter.String(), nil
+	str = tmpWriter.String()
+	err = nil
+	return
 }
 
 func ParsePage2(page Page) (string, error) {
@@ -82,7 +89,7 @@ func ParsePageWOVars(name string, tpl string, menu string) (string, error) {
 func Text(w *http.ResponseWriter, r string) {
 	_, err := (*w).Write([]byte(r))
 	if err != nil {
-		_ = fmt.Errorf("error : %s", err)
+		log.Fatal(fmt.Errorf("error : %s", err))
 	}
 }
 
@@ -91,7 +98,7 @@ func Css(w *http.ResponseWriter, r string) {
 
 	_, err := (*w).Write([]byte(r))
 	if err != nil {
-		_ = fmt.Errorf("error : %s", err)
+		log.Fatal(fmt.Errorf("error : %s", err))
 	}
 }
 
@@ -100,7 +107,7 @@ func Js(w *http.ResponseWriter, r string) {
 
 	_, err := (*w).Write([]byte(r))
 	if err != nil {
-		_ = fmt.Errorf("error : %s", err)
+		log.Fatal(fmt.Errorf("error : %s", err))
 	}
 }
 

@@ -35,7 +35,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	} else {
 		alert = project.Create()
 
-		if alert.Type == SUCCESS {
+		if alert.Type == string(SUCCESS) {
 			item := history.NewItem(project.Path, &project.Name, project.Techno)
 			err := item.AddProject()
 			if err != nil {

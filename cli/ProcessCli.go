@@ -35,7 +35,7 @@ func Process() (exit bool) {
 		} else {
 			alert = project.Create()
 
-			if alert.Type == SUCCESS {
+			if alert.Type == string(SUCCESS) {
 				item := history.NewItem(project.Path, &project.Name, project.Techno)
 				err := item.AddProject()
 				if err != nil {
@@ -45,7 +45,7 @@ func Process() (exit bool) {
 		}
 
 		alertMessage := ""
-		if alert.Type == ERROR {
+		if alert.Type == string(ERROR) {
 			alertMessage += "ERROR: "
 		}
 

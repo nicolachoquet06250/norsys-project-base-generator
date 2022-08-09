@@ -3,6 +3,7 @@ package history
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"npbg/files"
 	"npbg/helpers"
 	"npbg/technos"
@@ -136,7 +137,10 @@ func (h ItemHistory) RemoveProject() error {
 
 	file := files.NewFile(GetHistoryFilePath())
 
-	_ = file.Empty()
+	err = file.Empty()
+	if err != nil {
+		log.Fatal(fmt.Errorf("fail to enpty file %s %s", file.Path, err))
+	}
 
 	err = file.Update(string(jsonV))
 	if err != nil {
@@ -158,7 +162,10 @@ func GetHistoryList() *History {
 	if err != nil {
 		println(err.Error())
 		historyFileContent = "[]"
-		_ = file.Create(historyFileContent, true)
+		err = file.Create(historyFileContent, true)
+		if err != nil {
+			log.Fatal(fmt.Errorf("fail to create file %s %s", file.Path, err))
+		}
 	}
 
 	historyFileContent, err = file.GetContent()

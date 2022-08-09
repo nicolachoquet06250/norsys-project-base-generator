@@ -3,6 +3,7 @@ package files
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	. "npbg/helpers"
 	"os"
 	"strings"
@@ -106,7 +107,10 @@ func (f File) Update(content string) error {
 		return fmt.Errorf("failed opening file: %s", err)
 	}
 	defer func(file *os.File) {
-		_ = file.Close()
+		err = file.Close()
+		if err != nil {
+			log.Fatalln(fmt.Errorf("failed to close file %s", err))
+		}
 	}(file)
 
 	_, err = file.WriteAt([]byte(content), 0) // Write at 0 beginning

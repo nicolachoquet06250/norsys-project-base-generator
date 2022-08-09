@@ -11,6 +11,7 @@ const (
 	OpenFolder              Channel = "OpenFolder"
 	GetTree                 Channel = "GetTree"
 	DestroyLoader           Channel = "DestroyLoader"
+	ShowAlert               Channel = "ShowAlert"
 )
 
 type NotificationOption struct {

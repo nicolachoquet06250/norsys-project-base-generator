@@ -1,8 +1,11 @@
 package helpers
 
+type AlertStatus string
+
 const (
-	SUCCESS = "success"
-	ERROR   = "danger"
+	SUCCESS AlertStatus = "success"
+	ERROR   AlertStatus = "danger"
+	INFO    AlertStatus = "info"
 )
 
 type Alert struct {
@@ -10,9 +13,9 @@ type Alert struct {
 	Type    string
 }
 
-func NewAlert(message string, status string) Alert {
+func NewAlert(message string, status AlertStatus) Alert {
 	return Alert{
 		Message: message,
-		Type:    status,
+		Type:    string(status),
 	}
 }

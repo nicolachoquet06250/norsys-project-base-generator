@@ -29,12 +29,26 @@
                     window.location.href = message.data.uri;
 
                     return message.data.uri;
-                } else if (message.channel === "PutFolder") {
+                }
+                else if (message.channel === "PutFolder") {
                     const folder = message.data.folder;
 
                     document.querySelector('#path').value = folder
 
                     return folder;
+                }
+                else if (message.channel === 'ShowAlert') {
+                    if (message.data.type !== '' && message.data.message !== '') {
+                        const alert = document.createElement('div');
+                        alert.classList.add('alert', `alert-${message.data.type}`);
+                        alert.setAttribute('role', 'alert');
+                        alert.innerHTML = message.data.message;
+
+                        document.querySelector('.alert-container').appendChild(alert)
+                        setTimeout(() => {
+                            alert.remove()
+                        }, 6000)
+                    }
                 }
             };
             astilectron.onMessage(newMessageHandler);
@@ -73,11 +87,13 @@
         <div class="card p-3 mt-2">
                 <h2 class="card-title"> {{ .Page.Title.Page }} </h2>
 
-                {{if .Page.Vars.Alert}}
+                <div class="alert-container">
+                    {{if .Page.Vars.Alert}}
                     <div class="alert alert-{{.Page.Vars.Alert.Type}}" style="max-width: 600px" role="alert">
                         {{.Page.Vars.Alert.Message}}
                     </div>
-                {{end}}
+                    {{end}}
+                </div>
 
                 <form method="get" action="/generate" class="card-body">
                     <div class="container-fluid">
