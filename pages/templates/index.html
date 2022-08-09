@@ -24,34 +24,31 @@
              * @param {Record<string, string>|Record<string, string>[]} message.data
              * @returns {string}
              */
-            const newMessageHandler = message => {
-                if (message.channel === "Redirect") {
-                    window.location.href = message.data.uri;
+            const handleNewMessage = message => {
+                switch (message.channel) {
+                    case 'Redirect':
+                        window.location.href = message.data.uri;
+                        return message.data.uri;
+                    case 'PutFolder':
+                        const folder = message.data.folder;
+                        document.querySelector('#path').value = folder
+                        return folder;
+                    case 'ShowAlert':
+                        if (message.data.type !== '' && message.data.message !== '') {
+                            const alert = document.createElement('div');
+                            alert.classList.add('alert', `alert-${message.data.type}`);
+                            alert.setAttribute('role', 'alert');
+                            alert.innerHTML = message.data.message;
 
-                    return message.data.uri;
-                }
-                else if (message.channel === "PutFolder") {
-                    const folder = message.data.folder;
-
-                    document.querySelector('#path').value = folder
-
-                    return folder;
-                }
-                else if (message.channel === 'ShowAlert') {
-                    if (message.data.type !== '' && message.data.message !== '') {
-                        const alert = document.createElement('div');
-                        alert.classList.add('alert', `alert-${message.data.type}`);
-                        alert.setAttribute('role', 'alert');
-                        alert.innerHTML = message.data.message;
-
-                        document.querySelector('.alert-container').appendChild(alert)
-                        setTimeout(() => {
-                            alert.remove()
-                        }, 6000)
-                    }
+                            document.querySelector('.alert-container').appendChild(alert)
+                            setTimeout(() => {
+                                alert.remove()
+                            }, 30000)
+                        }
+                        return message.data.message
                 }
             };
-            astilectron.onMessage(newMessageHandler);
+            astilectron.onMessage(handleNewMessage);
 
             {{if .Page.Vars.Alert}}
             const type = '{{.Page.Vars.Alert.Type}}'
@@ -64,19 +61,20 @@
                     body: `{{.Page.Vars.Alert.Message}}`.substring(1, `{{.Page.Vars.Alert.Message}}`.length - 2)
                 }
             })
-            {{end}}
-
+            {{else}}
             setTimeout(() => {
                 sendMessage({
                     channel: 'DestroyLoader'
                 })
             }, 1000)
+            {{end}}
 
-            document.querySelector('#path').addEventListener('focus', () => {
+            const handleFocus = () => {
                 sendMessage({ channel: 'OpenFolderSelectorModal' });
 
                 document.querySelector('#path').blur();
-            })
+            };
+            document.querySelector('#path').addEventListener('focus', handleFocus)
         })
     </script>
 </head>

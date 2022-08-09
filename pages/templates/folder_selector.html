@@ -22,20 +22,41 @@
             let item, mainList
 
             if (isRoot) {
+                const handleRootClick = () => {
+                    const windowBody = document.querySelector('.element-list');
+
+                    windowBody.innerHTML = '';
+
+                    for (const folder of tree) {
+                        const f = document.createElement('div')
+
+                        const icon = document.createElement('i')
+                        icon.classList.add('fa-solid', 'fa-folder')
+                        f.appendChild(icon)
+
+                        const text = document.createElement('span');
+                        text.innerHTML = folder
+                        f.appendChild(text)
+
+                        windowBody.appendChild(f)
+                    }
+                };
+
                 mainList = document.createElement('ul')
 
                 item = document.createElement('li')
-                item.style.paddingBottom = '5px';
                 item.classList.add('opened')
+                item.style.cursor = 'pointer'
+                item.style.paddingBottom = '5px';
 
                 const folderIcon = document.createElement('i');
                 folderIcon.classList.add('fa-solid', 'fa-house')
-                folderIcon.addEventListener('click', onItemClicked)
+                folderIcon.addEventListener('click', handleRootClick)
                 item.appendChild(folderIcon)
 
                 const text = document.createElement('span')
                 text.innerHTML = 'Home'
-                text.addEventListener('click', onItemClicked)
+                text.addEventListener('click', handleRootClick)
                 item.appendChild(text)
 
                 mainList.appendChild(item)
@@ -79,18 +100,50 @@
             return Array.from(list.children)
         };
 
+        const buildTreeInBody = (basePath, pathSeparator, tree) => {
+            const windowBody = document.querySelector('.element-list');
+
+            windowBody.innerHTML = '';
+
+            for (const folder of tree) {
+                const f = document.createElement('div')
+
+                const icon = document.createElement('i')
+                icon.classList.add('fa-solid', 'fa-folder')
+                f.appendChild(icon)
+
+                const text = document.createElement('span');
+                text.innerHTML = folder
+                f.appendChild(text)
+
+                const input = document.createElement('input')
+                input.setAttribute('type', 'hidden');
+                input.value = basePath + pathSeparator + folder;
+                f.appendChild(input)
+
+                f.addEventListener('click', () => {
+                    for (const it of Array.from(f.parentElement.querySelectorAll('div'))) f.classList.remove('selected');
+                    f.classList.add('selected');
+
+                    document.querySelector('#folder').value = basePath + pathSeparator + folder;
+                });
+
+                windowBody.appendChild(f)
+            }
+        }
+
         const onItemClicked = e => {
             const element = e.target.parentElement;
             const list = element.querySelector('ul')
 
-            if (list.children.length === 0) {
+            // if (list.children.length === 0) {
                 sendMessage({
                     channel: 'OpenFolder',
                     data: {
                         folder: element.getAttribute('data-path')
                     }
                 })
-            }
+            // }
 
             if (element.classList.contains('opened')) {
                 element.classList.remove('opened');
@@ -107,56 +160,49 @@
              * @param {Record<string, string>|Record<string, string>[]} message.data
              * @returns {string}
              */
-            const newMessageHandler = message => {
-                if (message.channel === 'GetTree') {
-                    const tree = message.data.tree;
-                    const basePath = message.data.basePath;
-                    const pathSeparator = message.data.pathSeparator;
-                    const isRoot = message.data.isHome;
+            const handleNewMessage = message => {
+                switch (message.channel) {
+                    case 'GetTree':
+                        const basePath = message.data.basePath;
+                        const pathSeparator = message.data.pathSeparator;
+                        const isRoot = message.data.isHome;
+                        const tree = message.data.tree;
 
-                    console.log(basePath)
+                        const element = document.querySelector(`li[data-dir="${basePath.replaceAll(/[:\/\\ ]/g, '-')}"]`);
+                        const list = element?.querySelector('ul') ?? { children : [] }
 
-                    let root = document.querySelector('.left-menu')
-                        .querySelector(`[data-dir="${basePath.replaceAll(/[:\/\\ ]/g, '-')}"]`)
-                        ?.querySelector('ul');
+                        if (list.children.length === 0) {
+                            let root = document.querySelector('.left-menu > nav')
+                                .querySelector(`[data-dir="${basePath.replaceAll(/[:\/\\ ]/g, '-')}"]`)
+                                ?.querySelector('ul');
 
-                    console.log(root)
+                            if (isRoot) {
+                                root = document.querySelector('.left-menu > nav');
+                            }
 
-                    console.log(isRoot)
+                            const builtTree = buildTree(tree, basePath, pathSeparator, isRoot)
 
-                    if (isRoot) {
-                        root = document.querySelector('.left-menu');
-                    }
-
-                    console.log(root);
-
-                    const builtTree = buildTree(tree, basePath, pathSeparator, isRoot)
-
-                    if (isRoot) {
-                        root.appendChild(
-                            buildTree(tree, basePath, pathSeparator, isRoot)
-                        )
-                    } else {
-                        for (const element of builtTree) {
-                            root.appendChild(element)
+                            if (isRoot) {
+                                root.appendChild(builtTree)
+                            } else {
+                                for (const element of builtTree) root.appendChild(element)
+                            }
                         }
-                    }
 
-                    return tree;
+                        buildTreeInBody(basePath, pathSeparator, tree)
+
+                        return tree;
                 }
             };
-            astilectron.onMessage(newMessageHandler);
+            astilectron.onMessage(handleNewMessage);
 
             setTimeout(() => {
-                sendMessage({
-                    channel: `OpenFolder`
-                })
-            }, 1000)
-        });
+                sendMessage({ channel: `OpenFolder` })
+            }, 1000);
 
-        window.addEventListener('load', () => {
-            document.querySelector('#open').addEventListener('click', () => {
+            const handleClick = () => {
                 const folderElement = document.querySelector('#folder')
+
                 if (folderElement.value !== '') {
                     sendMessage({
                         channel: 'ChooseFolder',
@@ -165,8 +211,9 @@
                         }
                     })
                 }
-            })
-        })
+            };
+            document.querySelector('#open').addEventListener('click', handleClick)
+        });
     </script>
 </head>
 <body>
@@ -213,7 +260,11 @@
     </header>
 
     <main>
-        <nav class="left-menu"></nav>
+        <aside class="left-menu">
+            <nav></nav>
+
+            <div></div>
+        </aside>
 
         <div class="element-list"></div>
     </main>
