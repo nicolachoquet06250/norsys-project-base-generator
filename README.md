@@ -42,3 +42,4 @@ Application CLI / GUI / Web permétant de générérer un template de projet
 * https://curatedgo.com/r/thanks-to-go-astilectron-asticodego-astilectron/index.html
 * https://medium.com/@asticode/how-to-add-a-gui-to-your-golang-app-in-5-easy-steps-c25c99d4d8e0
 * https://www.bgs-associes.com/configurer-une-application-avec-apache-php-mysql/
+* https://github.com/wellington/go-libsass
