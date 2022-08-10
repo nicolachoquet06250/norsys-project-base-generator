@@ -18,29 +18,11 @@
     <script src="assets/init_astilectron.js"></script>
 
     <script>
-        const buildTree = (tree, baseTree, pathSeparator, isRoot) => {
+        const buildTree = (tree, basePath, pathSeparator, isRoot) => {
             let item, mainList
 
             if (isRoot) {
-                const handleRootClick = () => {
-                    const windowBody = document.querySelector('.element-list');
-
-                    windowBody.innerHTML = '';
-
-                    for (const folder of tree) {
-                        const f = document.createElement('div')
-
-                        const icon = document.createElement('i')
-                        icon.classList.add('fa-solid', 'fa-folder')
-                        f.appendChild(icon)
-
-                        const text = document.createElement('span');
-                        text.innerHTML = folder
-                        f.appendChild(text)
-
-                        windowBody.appendChild(f)
-                    }
-                };
+                const handleRootClick = () => buildTreeInBody(basePath, pathSeparator, tree);
 
                 mainList = document.createElement('ul')
 
@@ -64,10 +46,10 @@
 
             const list = document.createElement('ul')
 
-            for (const dir of tree) {
+            for (const dir of (tree ?? [])) {
                 const item = document.createElement('li')
-                item.setAttribute('data-dir', (baseTree + pathSeparator + dir).replaceAll(/[:\/\\ ]/g, '-'))
-                item.setAttribute('data-path', baseTree + pathSeparator + dir)
+                item.setAttribute('data-dir', (basePath + pathSeparator + dir).replaceAll(/[:\/\\ ]/g, '-'))
+                item.setAttribute('data-path', basePath + pathSeparator + dir)
                 item.classList.add('closed', 'tree-item')
 
                 const folderIcon = document.createElement('i');
@@ -82,7 +64,7 @@
 
                 const input = document.createElement('input')
                 input.setAttribute('type', 'hidden')
-                input.value = baseTree + pathSeparator + dir
+                input.value = basePath + pathSeparator + dir
                 item.appendChild(input)
 
                 const subList = document.createElement('ul')
@@ -105,7 +87,7 @@
 
             windowBody.innerHTML = '';
 
-            for (const folder of tree) {
+            for (const folder of (tree ?? [])) {
                 const f = document.createElement('div')
 
                 const icon = document.createElement('i')
@@ -122,7 +104,7 @@
                 f.appendChild(input)
 
                 f.addEventListener('click', () => {
-                    for (const it of Array.from(f.parentElement.querySelectorAll('div'))) f.classList.remove('selected');
+                    document.querySelector('.element-list .selected')?.classList.remove('selected')
                     f.classList.add('selected');
 
                     document.querySelector('#folder').value = basePath + pathSeparator + folder;
@@ -136,14 +118,12 @@
             const element = e.target.parentElement;
             const list = element.querySelector('ul')
 
-            // if (list.children.length === 0) {
-                sendMessage({
-                    channel: 'OpenFolder',
-                    data: {
-                        folder: element.getAttribute('data-path')
-                    }
-                })
-            // }
+            sendMessage({
+                channel: 'OpenFolder',
+                data: {
+                    folder: element.getAttribute('data-path')
+                }
+            })
 
             if (element.classList.contains('opened')) {
                 element.classList.remove('opened');
@@ -195,6 +175,12 @@
                 }
             };
             astilectron.onMessage(handleNewMessage);
+
+            document.querySelector('.element-list').addEventListener('click', e => {
+                if (e.target.classList.contains('element-list')) {
+                    document.querySelector('.element-list .selected')?.classList.remove('selected')
+                }
+            })
 
             setTimeout(() => {
                 sendMessage({ channel: `OpenFolder` })
