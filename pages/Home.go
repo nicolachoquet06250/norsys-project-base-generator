@@ -2,9 +2,13 @@ package pages
 
 import (
 	_ "embed"
+	"encoding/json"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	. "npbg/configFiles"
 	. "npbg/pages/helpers"
+	"npbg/technos"
 )
 
 //go:embed templates/index.html
@@ -27,7 +31,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			Tab:  "Formulaire de génération d'environements de dev",
 			Page: "Norsys Project Base Generator",
 		},
-		CssFiles: CssFiles{"assets/home.css"},
+		CssFiles: CssFiles{
+			"assets/home.css",
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css",
+		},
 		MetaData: MetaData{
 			Meta{
 				Charset:   "UTF-8",
@@ -97,4 +104,12 @@ func Loader(w http.ResponseWriter, r *http.Request) {
 	}, Menu)
 
 	Text(&w, result)
+}
+
+func GetFilesFromTechno(w http.ResponseWriter, r *http.Request) {
+	techno, _ := technos.FromValue(mux.Vars(r)["techno"])
+
+	j, _ := json.Marshal(ConfigFiles[techno.Name])
+
+	Text(&w, string(j))
 }

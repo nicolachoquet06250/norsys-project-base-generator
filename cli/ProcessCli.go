@@ -38,8 +38,12 @@ func Process() (exit bool) {
 			if alert.Type == string(SUCCESS) {
 				item := history.NewItem(project.Path, &project.Name, project.Techno)
 				err := item.AddProject()
-				if err != nil {
-					alert = NewAlert(err.Error(), ERROR)
+				_alert := MaybeError(err, func(err error) *Alert {
+					r := NewAlert(err.Error(), ERROR)
+					return &r
+				})
+				if _alert != nil {
+					alert = *_alert
 				}
 			}
 		}

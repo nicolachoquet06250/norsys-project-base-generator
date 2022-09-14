@@ -18,6 +18,144 @@
     <script src="assets/init_astilectron.js"></script>
 
     <script>
+        /**
+         * @param {Record<string, string>} files
+         */
+        function createFilesForm(files) {
+            const ElementType = {
+                Nav: 0,
+                Content: 1
+            }
+
+            function generateElement(html, vars, elementType, index) {
+                const r = Object.keys(vars).map(k => {
+                    html = html.replace(new RegExp(`\{${k}\}`), vars[k]);
+                    const dom = new DOMParser().parseFromString(html, "text/html")
+
+                    if (index === 0) {
+                        if (elementType === ElementType.Nav) {
+                            dom.querySelector('a').classList.add('active')
+                            dom.querySelector('a').setAttribute('aria-current', 'true')
+                        }
+                        else if (elementType === ElementType.Content) {
+                            dom.querySelector('.card-body').classList.remove('d-none')
+                        }
+                    }
+
+                    return dom.body.firstElementChild
+                })
+
+                return r[r.length - 1]
+            }
+
+            function generateCard(container) {
+                container.innerHTML = '';
+
+                const root = document.createElement('div');
+                root.classList.add('card');
+
+                const header = document.createElement('div');
+                header.classList.add('card-header');
+
+                const nav = document.createElement('ul')
+                nav.classList.add('nav', 'nav-tabs', 'card-header-nav')
+
+                header.appendChild(nav)
+                root.appendChild(header)
+
+                container.appendChild(root)
+
+                return container
+            }
+
+            function handleNavClick(e) {
+                e.preventDefault()
+
+                //nav
+                document.querySelector('#card-container a.active').removeAttribute('aria-current');
+                document.querySelector('#card-container a.active').classList.remove('active');
+                e.currentTarget.classList.add('active');
+                e.currentTarget.setAttribute('aria-current', 'true');
+
+                // content
+                Array.from(document.querySelectorAll('#card-container .card-body'))
+                    .map(e => e.classList.add('d-none'))
+                document.querySelector(`#card-container .card-body#${e.currentTarget.getAttribute('data-target')}`).classList.remove('d-none');
+            }
+
+            const container = generateCard(document.querySelector('#card-container')).querySelector('.card')
+            const card = {
+                nav: {
+                    item: document.querySelector('#npbg-files_form_nav_unit'),
+                    container: container.querySelector('.card-header-nav')
+                },
+                content: {
+                    item: document.querySelector('#npbg-files_form_content_unit'),
+                    container: container
+                }
+            };
+
+            Object.keys(files).map((file_name, i) => {
+                card.nav.container.appendChild(
+                    (() => {
+                        const li = generateElement(card.nav.item.innerHTML, {
+                            file_name,
+                            file_content_id: `content_${file_name}`
+                        }, ElementType.Nav, i)
+
+                        li.querySelector('a').addEventListener('click', handleNavClick)
+
+                        return li
+                    })()
+                )
+
+                card.content.container.appendChild(
+                    generateElement(card.content.item.innerHTML, {
+                        file_content_id: `content_${file_name}`,
+                        file_content_text: files[file_name]
+                    }, ElementType.Content, i)
+                )
+            })
+
+            /*card.nav.container.appendChild(
+                (() => {
+                    const li = generateElement(card.nav.item.innerHTML, {
+                        file_name: 'toto',
+                        file_content_id: 'content_toto'
+                    }, ElementType.Nav, 0)
+
+                    li.querySelector('a').addEventListener('click', handleNavClick)
+
+                    return li
+                })()
+            )
+            card.nav.container.appendChild(
+                (() => {
+                    const li = generateElement(card.nav.item.innerHTML, {
+                        file_name: 'tata',
+                        file_content_id: 'content_tata'
+                    }, ElementType.Nav, 1)
+
+                    li.querySelector('a').addEventListener('click', handleNavClick)
+
+                    return li
+                })()
+            )
+
+            card.content.container.appendChild(
+                generateElement(card.content.item.innerHTML, {
+                    file_content_id: 'content_toto',
+                    file_content_text: 'mon fichier text'
+                }, ElementType.Content, 0)
+            )
+            card.content.container.appendChild(
+                generateElement(card.content.item.innerHTML, {
+                    file_content_id: 'content_tata',
+                    file_content_text: 'mon fichier text 2'
+                }, ElementType.Content, 1)
+            )*/
+        }
+
         document.addEventListener('astilectron-ready', () => {
             /**
              * @param {string} message.channel
@@ -76,82 +214,111 @@
             };
             document.querySelector('#path').addEventListener('focus', handleFocus)
         })
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('#techno').addEventListener('input', e => {
+                fetch(`/getFilesFromTechno/${e.currentTarget.value}`)
+                    .then(r => r.json())
+                    .then(createFilesForm)
+            })
+        })
     </script>
 </head>
 <body>
+    <template id="npbg-files_form_nav_unit">
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-target="{file_content_id}">{file_name}</a>
+        </li>
+    </template>
+
+    <template id="npbg-files_form_content_unit">
+        <div class="card-body d-none" id="{file_content_id}">
+            <p class="card-text">{file_content_text}</p>
+
+            <a href="#" class="btn btn-success">
+                <i class="fa-solid fa-check"></i>
+            </a>
+            <a href="#" class="btn btn-danger">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        </div>
+    </template>
+
     {{ .Page.Menu }}
 
     <main class="d-flex justify-content-center align-items-center">
         <div class="card p-3 mt-2">
-                <h2 class="card-title"> {{ .Page.Title.Page }} </h2>
+            <h2 class="card-title"> {{ .Page.Title.Page }} </h2>
 
-                <div class="alert-container">
-                    {{if .Page.Vars.Alert}}
-                    <div class="alert alert-{{.Page.Vars.Alert.Type}}" style="max-width: 600px" role="alert">
-                        {{.Page.Vars.Alert.Message}}
+            <div class="alert-container">
+                {{if .Page.Vars.Alert}}
+                <div class="alert alert-{{.Page.Vars.Alert.Type}}" style="max-width: 600px" role="alert">
+                    {{.Page.Vars.Alert.Message}}
+                </div>
+                {{end}}
+            </div>
+
+            <form method="get" action="/generate" class="card-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="path" class="form-label">
+                                Path :
+                            </label>
+
+                            <input type="text" id="path" name="path" class="form-control"
+                                   {{if .Page.Vars.IsGenerate}}disabled{{end}}
+                                   {{if .Page.Vars.ProjectPath}}value="{{.Page.Vars.ProjectPath}}"{{end}}>
+                        </div>
                     </div>
-                    {{end}}
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="project-name" class="form-label">
+                                Project Name :
+                            </label>
+
+                            <input type="text" id="project-name" name="projectName" class="form-control"
+                                   {{if .Page.Vars.IsGenerate}}disabled{{end}}
+                                   {{if .Page.Vars.ProjectName}}value="{{.Page.Vars.ProjectName}}"{{end}}>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="techno">Techno : </label>
+
+                            <select id="techno" name="techno" class="form-select"
+                                    {{if .Page.Vars.IsGenerate}}disabled{{end}}>
+                                {{ range .Page.Vars.Technos }}
+                                <option value="{{ .Value }}" {{if .Selected}}selected{{end}}> {{ .Name }} </option>
+                                {{ end }}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 pt-2 d-flex justify-content-between align-items-center">
+                            {{if .Page.Vars.IsGenerate}}
+                                <a href="/" class="card-link">
+                                    Retour à l'accueil
+                                </a>
+                            {{else}}
+                                <button type="submit" class="btn btn-outline-success card-link">
+                                    Générer un environement
+                                </button>
+
+                                <button type="reset" class="btn btn-outline-danger card-link">
+                                    Annuler
+                                </button>
+                            {{end}}
+                        </div>
+                    </div>
                 </div>
 
-                <form method="get" action="/generate" class="card-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-12">
-                                <label for="path" class="form-label">
-                                    Path :
-                                </label>
-
-                                <input type="text" id="path" name="path" class="form-control"
-                                       {{if .Page.Vars.IsGenerate}}disabled{{end}}
-                                       {{if .Page.Vars.ProjectPath}}value="{{.Page.Vars.ProjectPath}}"{{end}}>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <label for="project-name" class="form-label">
-                                    Project Name :
-                                </label>
-
-                                <input type="text" id="project-name" name="projectName" class="form-control"
-                                       {{if .Page.Vars.IsGenerate}}disabled{{end}}
-                                       {{if .Page.Vars.ProjectName}}value="{{.Page.Vars.ProjectName}}"{{end}}>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <label for="techno">Techno : </label>
-
-                                <select id="techno" name="techno" class="form-select"
-                                        {{if .Page.Vars.IsGenerate}}disabled{{end}}>
-                                    {{ range .Page.Vars.Technos }}
-                                    <option value="{{ .Value }}" {{if .Selected}}selected{{end}}> {{ .Name }} </option>
-                                    {{ end }}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12 pt-2 d-flex justify-content-between align-items-center">
-                                {{if .Page.Vars.IsGenerate}}
-                                    <a href="/" class="card-link">
-                                        Retour à l'accueil
-                                    </a>
-                                {{else}}
-                                    <button type="submit" class="btn btn-outline-success card-link">
-                                        Générer un environement
-                                    </button>
-
-                                    <button type="reset" class="btn btn-outline-danger card-link">
-                                        Annuler
-                                    </button>
-                                {{end}}
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                <div id="card-container" class="container-fluid mt-2"></div>
+            </form>
+        </div>
     </main>
 </body>
 </html>

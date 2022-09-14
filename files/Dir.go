@@ -26,6 +26,10 @@ func (d Dir) Exists() (exists bool, err error) {
 
 	if d.Is() {
 		_, err := ioutil.ReadDir(d.Path)
+		MaybeError(err, func(err error) *bool {
+			r := err == nil
+			return &r
+		})
 		if err != nil {
 			return false, nil
 		}

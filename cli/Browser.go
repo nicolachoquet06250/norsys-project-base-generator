@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"log"
+	. "npbg/helpers"
 	"os/exec"
 	"runtime"
 )
@@ -22,7 +23,9 @@ func (_ Browser) Open(url string) {
 	default:
 		err = fmt.Errorf("unsupported platform")
 	}
-	if err != nil {
+	MaybeError(err, func(err error) *int64 {
 		log.Fatal(err)
-	}
+		var r *int64
+		return r
+	})
 }

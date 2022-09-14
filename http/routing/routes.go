@@ -11,12 +11,13 @@ import (
 type Route string
 
 const (
-	HomePage           Route = "/"
-	LoaderPage         Route = "/load"
-	GeneratePage       Route = "/generate"
-	HelpPage           Route = "/help"
-	GeneratedPage      Route = "/generated"
-	FolderSelectorPage Route = "/folderSelector"
+	HomePage               Route = "/"
+	LoaderPage             Route = "/load"
+	GeneratePage           Route = "/generate"
+	HelpPage               Route = "/help"
+	GeneratedPage          Route = "/generated"
+	FolderSelectorPage     Route = "/folderSelector"
+	GetFilesFromTechnoPage Route = "/getFilesFromTechno/{techno:[a-zA-Z_-]+}"
 )
 
 func RouteToString(route Route) string {
@@ -37,6 +38,10 @@ func Routes() {
 		Methods(httpMethods.GET)
 	r.HandleFunc(RouteToString(GeneratedPage), RemoveHistoryProject).
 		Methods(httpMethods.DELETE)
+
+	r.HandleFunc(RouteToString(GetFilesFromTechnoPage), GetFilesFromTechno).
+		Methods(httpMethods.GET)
+
 	r.HandleFunc("/assets/{file:[a-z_-]+}.css", CssAssets).
 		Methods(httpMethods.GET)
 	r.HandleFunc("/assets/{file:[a-z_-]+}.js", JsAssets).
