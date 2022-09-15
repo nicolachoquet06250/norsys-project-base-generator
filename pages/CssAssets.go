@@ -35,13 +35,17 @@ var bootstrapHorsProdCssMap string
 //go:embed templates/assets/bootstrap/css/bootstrap.min.css.map
 var bootstrapProdCssMap string
 
+//go:embed templates/assets/custom-highlightjs-line-numbers.css
+var customHighlightjsCssMap string
+
 const (
-	HOME            = "home"
-	LOADER          = "loader"
-	GENERATE        = "generate"
-	HELP            = "help"
-	FOLDER_SELECROR = "folder_selector"
-	VOID            = ""
+	HOME               = "home"
+	LOADER             = "loader"
+	GENERATE           = "generate"
+	HELP               = "help"
+	FOLDER_SELECROR    = "folder_selector"
+	CUSTOM_HIGHLIGHTJS = "custom-highlightjs-line-numbers"
+	VOID               = ""
 )
 
 func getCssContentFromSource(source string) string {
@@ -70,6 +74,8 @@ func CssAssets(w http.ResponseWriter, r *http.Request) {
 				return getCssContentFromSource(generateCss)
 			case FOLDER_SELECROR:
 				return getCssContentFromSource(folderSelectorCss)
+			case CUSTOM_HIGHLIGHTJS:
+				return getCssContentFromSource(customHighlightjsCssMap)
 			case HELP:
 				return getCssContentFromSource(helpCss)
 			default:

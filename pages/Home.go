@@ -34,6 +34,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		CssFiles: CssFiles{
 			"assets/home.css",
 			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css",
+			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css",
+			"assets/custom-highlightjs-line-numbers.css",
 		},
 		MetaData: MetaData{
 			Meta{

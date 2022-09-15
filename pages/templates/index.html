@@ -16,8 +16,20 @@
     {{end}}
 
     <script src="assets/init_astilectron.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/languages/dockerfile.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/languages/shell.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
 
     <script>
+        const projectName = '{{ .ProjectName }}';
+
+        const htmlEscape = unsafe => unsafe
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
         /**
          * @param {Record<string, string>} files
          */
@@ -81,6 +93,8 @@
                 Array.from(document.querySelectorAll('#card-container .card-body'))
                     .map(e => e.classList.add('d-none'))
                 document.querySelector(`#card-container .card-body#${e.currentTarget.getAttribute('data-target')}`).classList.remove('d-none');
+
+                hljs.initLineNumbersOnLoad();
             }
 
             const container = generateCard(document.querySelector('#card-container')).querySelector('.card')
@@ -95,65 +109,43 @@
                 }
             };
 
-            Object.keys(files).map((file_name, i) => {
-                card.nav.container.appendChild(
-                    (() => {
-                        const li = generateElement(card.nav.item.innerHTML, {
-                            file_name,
-                            file_content_id: `content_${file_name}`
-                        }, ElementType.Nav, i)
+            const LANGUAGES = {
+                '.html': 'html',
+                '.xml': 'xml',
+                '.yml': 'yaml',
+                '.sh': 'shell',
+                '.ps1': 'powershell',
+                '.js': 'js',
+                '.css': 'css',
+                '.Dockerfile': 'dockerfile'
+            }
 
-                        li.querySelector('a').addEventListener('click', handleNavClick)
+            Object.keys(files)
+                .map(k => k.replace('{{.ProjectName}}', projectName))
+                .map((file_name, i) => {
+                    const language = LANGUAGES['.' + (file_name.split('.')[1] ?? 'Dockerfile')]
 
-                        return li
-                    })()
-                )
+                    const file_content_id = `content_${file_name}`.replace(/[.\/\\]/g, '-');
+                    const file_content_text = `<pre><code class="language-${language}">` +
+                        htmlEscape(files[file_name])
+                        + '</code></pre>'
 
-                card.content.container.appendChild(
-                    generateElement(card.content.item.innerHTML, {
-                        file_content_id: `content_${file_name}`,
-                        file_content_text: files[file_name]
-                    }, ElementType.Content, i)
-                )
-            })
+                    card.nav.container.appendChild(
+                        (() => {
+                            const li = generateElement(card.nav.item.innerHTML, { file_name, file_content_id }, ElementType.Nav, i);
+                            li.querySelector('a').addEventListener('click', handleNavClick);
 
-            /*card.nav.container.appendChild(
-                (() => {
-                    const li = generateElement(card.nav.item.innerHTML, {
-                        file_name: 'toto',
-                        file_content_id: 'content_toto'
-                    }, ElementType.Nav, 0)
+                            return li;
+                        })()
+                    )
 
-                    li.querySelector('a').addEventListener('click', handleNavClick)
+                    card.content.container.appendChild(
+                        generateElement(card.content.item.innerHTML, { file_content_id, file_content_text }, ElementType.Content, i)
+                    )
+                })
 
-                    return li
-                })()
-            )
-            card.nav.container.appendChild(
-                (() => {
-                    const li = generateElement(card.nav.item.innerHTML, {
-                        file_name: 'tata',
-                        file_content_id: 'content_tata'
-                    }, ElementType.Nav, 1)
-
-                    li.querySelector('a').addEventListener('click', handleNavClick)
-
-                    return li
-                })()
-            )
-
-            card.content.container.appendChild(
-                generateElement(card.content.item.innerHTML, {
-                    file_content_id: 'content_toto',
-                    file_content_text: 'mon fichier text'
-                }, ElementType.Content, 0)
-            )
-            card.content.container.appendChild(
-                generateElement(card.content.item.innerHTML, {
-                    file_content_id: 'content_tata',
-                    file_content_text: 'mon fichier text 2'
-                }, ElementType.Content, 1)
-            )*/
+                hljs.highlightAll();
+                hljs.initLineNumbersOnLoad();
         }
 
         document.addEventListener('astilectron-ready', () => {
@@ -247,7 +239,7 @@
     {{ .Page.Menu }}
 
     <main class="d-flex justify-content-center align-items-center">
-        <div class="card p-3 mt-2">
+        <div class="card p-3 mt-2" style="max-height: calc(100% - 50px); overflow-y: auto;">
             <h2 class="card-title"> {{ .Page.Title.Page }} </h2>
 
             <div class="alert-container">

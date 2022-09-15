@@ -30,13 +30,11 @@ func (g treeGeneration) javaScript(configFiles *tree) *treeGeneration {
 	</body>
 </html>`,
 
-		"site" + Slash() + "script.js": `
-export default function () {
+		"site" + Slash() + "script.js": `export default function () {
 	document.querySelector('p').innerHTML = 'ça fontionne !!'
 }`,
 
-		"Dockerfile": `
-FROM httpd:2.4
+		"Dockerfile": `FROM httpd:2.4
 WORKDIR /usr/local/apache2/htdocs/
 COPY ./site/ /usr/local/apache2/htdocs/`,
 
@@ -49,8 +47,7 @@ COPY ./site/ /usr/local/apache2/htdocs/`,
 
 func (g treeGeneration) react15(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.React15] = treeElement{
-		"Dockerfile": `
-FROM node:latest
+		"Dockerfile": `FROM node:latest
 WORKDIR /app
 COPY package.json /app
 COPY yarn.lock /app
@@ -68,8 +65,7 @@ CMD ["yarn","start"]!`,
 
 func (g treeGeneration) react16(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.React16] = treeElement{
-		"Dockerfile": `
-FROM node:latest
+		"Dockerfile": `FROM node:latest
 WORKDIR /app
 COPY package.json /app
 COPY yarn.lock /app
@@ -87,8 +83,7 @@ CMD ["yarn","start"]!`,
 
 func (g treeGeneration) react17(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.React17] = treeElement{
-		"Dockerfile": `
-FROM node:latest
+		"Dockerfile": `FROM node:latest
 WORKDIR /app
 COPY package.json /app
 COPY yarn.lock /app
@@ -106,8 +101,7 @@ CMD ["yarn","start"]!`,
 
 func (g treeGeneration) react18(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.React18] = treeElement{
-		"Dockerfile": `
-FROM node:latest
+		"Dockerfile": `FROM node:latest
 WORKDIR /app
 COPY package.json /app
 COPY yarn.lock /app
@@ -125,8 +119,7 @@ CMD ["yarn","start"]!`,
 
 func (g treeGeneration) vue2(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.Vue2] = treeElement{
-		"Dockerfile": `
-FROM node:lts-alpine
+		"Dockerfile": `FROM node:lts-alpine
 # installe un simple serveur http pour servir un contenu statique
 RUN npm install -g http-server
 # définit le dossier 'app' comme dossier de travail
@@ -152,8 +145,7 @@ CMD [ "http-server", "dist" ]
 
 func (g treeGeneration) vue3(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.Vue3] = treeElement{
-		"Dockerfile": `
-FROM node:lts-alpine
+		"Dockerfile": `FROM node:lts-alpine
 # installe un simple serveur http pour servir un contenu statique
 RUN npm install -g http-server
 # définit le dossier 'app' comme dossier de travail
@@ -179,11 +171,10 @@ CMD [ "http-server", "dist" ]
 
 func (g treeGeneration) angular(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.Angular] = treeElement{
-		"Dockerfile": `
-FROM node:11.15.0-stretch
+		"Dockerfile": `FROM node:11.15.0-stretch
 RUN npm install -g @angular/cli && ng config -g cli.packageManager yarn
-WORKDIR /app
-version: '3'
+WORKDIR /app`,
+		"docker-compose.yml": `version: '3'
 services:
   node:
     build: .
@@ -203,8 +194,7 @@ services:
 
 func (g treeGeneration) php(configFiles *tree) *treeGeneration {
 	(*configFiles)[technosEnum.PHP] = treeElement{
-		"docker-compose.yml": `
-version: '3.3'
+		"docker-compose.yml": `version: '3.3'
 services:
   php_apache:
     build:
@@ -229,13 +219,11 @@ services:
     ports:
       - 3306:3306
 `,
-		"php" + Slash() + "Dockerfile": `
-FROM php:8.0.2-apache
+		"php" + Slash() + "Dockerfile": `FROM php:8.0.2-apache
 RUN apt-get update && apt-get upgrade -y
 EXPOSE 80
 `,
-		"run.sh":                               "docker-compose up --build -d",
-		"{{.ProjectName}}" + Slash() + ".void": "*",
+		"run.sh": "docker-compose up --build -d",
 	}
 
 	return &g

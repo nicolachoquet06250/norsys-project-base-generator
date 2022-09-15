@@ -17,7 +17,7 @@ const (
 	HelpPage               Route = "/help"
 	GeneratedPage          Route = "/generated"
 	FolderSelectorPage     Route = "/folderSelector"
-	GetFilesFromTechnoPage Route = "/getFilesFromTechno/{techno:[a-zA-Z_-]+}"
+	GetFilesFromTechnoPage Route = "/getFilesFromTechno/{techno:[a-zA-Z0-9_-]+}"
 )
 
 func RouteToString(route Route) string {
