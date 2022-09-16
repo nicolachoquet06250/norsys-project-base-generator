@@ -9,6 +9,7 @@ function sendMessage(json) {
     if (json.data === undefined) {
         json.data = {}
     }
-    astilectron.sendMessage(json)
-    console.log(json, "sent")
+    astilectron.sendMessage(json, () => {
+        console.log(json, "sent")
+    })
 }

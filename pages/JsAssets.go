@@ -17,6 +17,9 @@ var bootstrapHorsProdJs string
 //go:embed templates/assets/init_astilectron.js
 var initAstilectronJs string
 
+//go:embed templates/assets/folder_selector.js
+var folderSelectorJs string
+
 const (
 	ASTILECTRON = "init_astilectron"
 )
@@ -40,11 +43,13 @@ func JsAssets(w http.ResponseWriter, r *http.Request) {
 				substitution := "{{ .$variable }}"
 				initAstilectronJs = re.ReplaceAllString(initAstilectronJs, substitution)
 
-				/*re = regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)((, +)?(?P<defaultValue>[a-zA-Z-_'"]+))?\)`)
-				substitution = "{{ if .$variable }} {{.$variable}} {{ else }}$defaultValue{{ end }}"
-				initAstilectronJs = re.ReplaceAllString(initAstilectronJs, substitution)*/
-
 				return initAstilectronJs
+			case FOLDER_SELECROR:
+				re := regexp.MustCompile(`(?m)go-bind\((?P<variable>[a-zA-Z-_]+)\)`)
+				substitution := "{{ .$variable }}"
+				folderSelectorJs = re.ReplaceAllString(folderSelectorJs, substitution)
+
+				return folderSelectorJs
 			default:
 				return VOID
 			}
